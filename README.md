@@ -2,6 +2,7 @@
 
 > Aujourd'hui, **seuls 11 % des appels au 115 sont traités**.
 > Miki décroche tous les autres, recueille la situation de chaque appelant et la transmet aux écoutants avec un score de priorité.
+> Et parce qu'elle répond à tout le monde, elle donne enfin une image fiable de qui appelle le 115.
 
 <!-- TODO : citer la source des chiffres (11 %, 2 h d'attente) -->
 
@@ -43,7 +44,37 @@ Si la personne évoque un danger vital (malaise, blessure grave, idées suicidai
 
 - **Pour les appelants** : chacun obtient un dossier, sans passer des heures au téléphone.
 - **Pour les écoutants** : les dossiers arrivent déjà triés par priorité, ce qui permet de traiter les urgences en premier.
-- **Pour la FAS et la DIHAL** : des statistiques sur l'ensemble des appelants, et pas seulement sur ceux qui ont été décrochés. C'est une source précieuse pour piloter l'hébergement d'urgence et justifier les moyens.
+- **Pour la FAS et la DIHAL** : des statistiques sur l'ensemble des appelants, et pas seulement sur ceux qui ont été décrochés (voir ci-dessous).
+
+## Des statistiques enfin fiables
+
+C'est l'autre apport majeur de Miki.
+
+### Aujourd'hui : on ne connaît qu'une petite partie des appelants
+
+Les statistiques du 115 reposent sur les appels décrochés. Or 89 % des appels ne le sont jamais : on ne sait pas qui sont ces personnes, où elles se trouvent ni ce dont elles ont besoin. La demande réelle d'hébergement d'urgence est donc largement invisible, et les chiffres utilisés pour piloter le dispositif ne reflètent qu'une petite partie de la réalité.
+
+### Avec Miki : chaque appel devient une donnée
+
+Comme Miki répond à tous les appels, chacun produit une fiche structurée, toujours au même format. Agrégées et anonymisées, ces fiches permettent de mesurer :
+
+- **le volume réel de la demande**, y compris celle qui n'aboutit à aucune prise en charge ;
+- **le profil des appelants** : âge, sexe, personnes seules ou familles, nombre et âge des enfants ;
+- **les publics vulnérables** : part de femmes enceintes, de personnes handicapées, malades, âgées de 65 ans et plus, ou de mineurs seuls ;
+- **l'ancienneté à la rue**, et notamment le nombre de personnes qui y passent leur première nuit ;
+- **la géographie des besoins** : où se trouvent les personnes qui appellent, ville par ville et quartier par quartier ;
+- **la répartition des niveaux de priorité**, pour savoir combien de situations urgentes restent sans solution ;
+- **l'évolution dans le temps** : par heure, par jour, par saison, par exemple lors d'une vague de froid.
+
+### À quoi ça sert
+
+Pour la FAS, la DIHAL et les SIAO, ces données sont une mine d'or :
+
+- **piloter l'hébergement d'urgence** : ouvrir des places là où la demande est la plus forte, anticiper les pics ;
+- **adapter l'offre aux publics** : places pour familles, pour femmes enceintes, accessibles aux personnes handicapées, acceptant les animaux ;
+- **justifier les moyens** auprès des pouvoirs publics avec des chiffres qui couvrent l'ensemble de la demande, et non une fraction.
+
+Un point de vigilance : une même personne peut appeler plusieurs fois. Pour compter des personnes et pas seulement des appels, il faudra rapprocher les appels d'une même personne, tout en respectant le RGPD.
 
 ## Où en est le projet
 
@@ -64,7 +95,8 @@ Miki décroche chaque appel du 115, sans attente et en parallèle. Chaque appela
 - Le raccordement à la téléphonie (SIP) pour recevoir de vrais appels, plusieurs en même temps.
 - L'interface des écoutants, avec la file des dossiers triés par priorité.
 - Un stockage sécurisé des dossiers (voir la section RGPD).
-- Des tableaux de statistiques anonymisées pour la FAS et la DIHAL.
+- L'agrégation des fiches en statistiques anonymisées, avec un tableau de bord pour la FAS et la DIHAL.
+- Le rapprochement des appels d'une même personne, pour compter des personnes et pas seulement des appels.
 - Des tests en conditions réelles avec des écoutants du 115.
 
 ## Données personnelles et RGPD
@@ -84,33 +116,78 @@ Avant une mise en production, il faudra :
 
 ## Fonctionnement technique
 
-Miki est construite sur [LiveKit Agents](https://github.com/livekit/agents) :
+Miki est un agent vocal construit sur [LiveKit Agents](https://github.com/livekit/agents), un framework open source pour les agents vocaux en temps réel. Le défi principal est la **latence** : pour qu'une conversation paraisse naturelle, Miki doit répondre en moins d'une seconde environ. L'architecture est donc pensée pour que rien de lent ne se trouve dans le chemin de la réponse.
+
+### Le pipeline
 
 ```
-Appelant (voix)
-     │
-     ▼
-Deepgram ─────────► transcription de la voix
-     │
-     ▼
-Parleur (Groq) ───► réponse de Miki, courte et orale
-     ▲
-     │ consigne
-Penseur (Groq / Gemini) ► fiche structurée + phase de l'appel
-     │
-     ├──► grille de priorité ──► score de 1 à 5
-     │
-     ▼
-ElevenLabs ───────► voix de Miki (ou Cartesia via TTS_PROVIDER=cartesia)
+                  Appelant (voix)
+                        │
+                        ▼
+      Silero VAD + détecteur de fin de tour
+                        │
+                        ▼
+      Deepgram Nova-3 ──────► transcription (français)
+                        │
+          ┌─────────────┴──────────────┐
+          ▼                            ▼
+   PARLEUR (Groq)               PENSEUR (Groq / Gemini)
+   réponse rapide,              en parallèle : fiche,
+   courte et orale    ◄──────   phase de l'appel, consigne
+          │          consigne          │
+          │                            ▼
+          │                  grille de priorité (1 à 5)
+          ▼
+   ElevenLabs Flash v2.5 ──► voix de Miki
 ```
 
-- **Le parleur** répond à l'appelant rapidement, en phrases courtes adaptées à l'oral.
-- **Le penseur** analyse toute la conversation en parallèle : il remplit la fiche, repère les informations manquantes et donne au parleur la consigne pour son prochain tour.
+### Les briques
+
+| Étape | Technologie | Rôle |
+|---|---|---|
+| Détection de la voix | **Silero VAD** | Repère quand la personne parle ou se tait |
+| Fin de tour | **Détecteur de fin de tour LiveKit** | Devine si la phrase est terminée ; Miki attend jusqu'à 3 s si la personne semble chercher ses mots |
+| Transcription | **Deepgram Nova-3** (français) | Transforme la voix en texte, en streaming |
+| Parleur | **Groq** (Qwen, ou GPT-OSS) | Génère la réponse de Miki très rapidement, sans raisonnement long |
+| Penseur | **GPT-OSS 120B sur Groq**, avec repli possible sur **Gemini** | Analyse toute la conversation, remplit la fiche et guide le parleur |
+| Synthèse vocale | **ElevenLabs Flash v2.5** | Donne sa voix à Miki, en français, avec un débit légèrement ralenti (0,9) pour être bien comprise |
+| Synthèse alternative | **Cartesia Sonic-3** | Autre voix possible, via `TTS_PROVIDER=cartesia` |
+
+### Deux cerveaux : le parleur et le penseur
+
+Un seul modèle ne peut pas être à la fois très rapide et très rigoureux. Miki en utilise donc deux :
+
+- **Le parleur** est un modèle rapide qui répond à chaque tour de parole. Il suit les instructions de `prompts.py` : phrases courtes, une seule question à la fois, vouvoiement, empathie.
+- **Le penseur** est un modèle plus puissant qui tourne en parallèle, sans jamais bloquer la conversation. Après chaque intervention de l'appelant, il relit toute la transcription et produit un JSON structuré : la fiche de l'appelant, les informations manquantes, la phase de l'appel (écoute, collecte, vérification, accompagnement) et une consigne pour le prochain tour du parleur.
+
+Le parleur reçoit à chaque tour la fiche à jour et la consigne du penseur. Il ne redemande donc jamais une information déjà donnée, même si la personne l'a dite dans le désordre.
+
+Si le penseur détecte un **danger vital**, il interrompt le déroulé et fait immédiatement orienter la personne vers le 15 ou le 112.
+
+### Fiabilité
+
+- **Score de priorité déterministe** : le penseur extrait seulement des critères factuels (vrai ou faux) ; le score est calculé par le code, à partir d'une grille fixe. Le résultat est reproductible et vérifiable.
+- **Repli entre modèles** : le penseur peut essayer plusieurs modèles dans l'ordre (`THINKER_MODELS`) si l'un est saturé ou hors quota.
+- **Analyse finale** : à la fin de l'appel, le penseur refait une dernière analyse pour intégrer les derniers échanges.
+- **Mesure de latence** : chaque échange est chronométré, étape par étape (fin de tour, transcription, parleur, synthèse vocale), avec un objectif de 600 ms. Un résumé (médiane et P95) est produit à la fin de chaque appel.
+
+### Ce que produit chaque appel
+
+À la fin de l'appel, deux fichiers sont écrits dans `sessions/` :
+
+- `…-appel.json` : la fiche complète (identité, situation, localisation, cas particuliers, critères, score de priorité) et la transcription ;
+- `…-latence.csv` : les mesures de latence de chaque échange.
+
+C'est cette fiche, toujours au même format, qui alimentera l'interface des écoutants et les statistiques.
+
+### Les fichiers
 
 | Fichier | Rôle |
 |---|---|
-| `agent.py` | L'agent vocal : pipeline, penseur, score de priorité, enregistrement des appels |
-| `prompts.py` | Les instructions de Miki (parleur) et du penseur, et le message d'accueil |
+| `agent.py` | L'agent vocal : pipeline, penseur, score de priorité, mesure de latence, enregistrement des appels |
+| `prompts.py` | Les instructions du parleur et du penseur, et le message d'accueil |
+| `Makefile` | Installation et lancement |
+| `.env.example` | La liste des clés API et des réglages (modèles, voix, débit) |
 
 ## Installation et lancement
 
