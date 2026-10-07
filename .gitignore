@@ -1,23 +1,6 @@
-# Environnement virtuel
+.env
 venv/
 .venv/
-
-# Python
+sessions/
 __pycache__/
-*.py[cod]
-*.so
-
-# Variables d'environnement
-.env
-
-# Audio
-voice.mp3
-
-# macOS
 .DS_Store
-
-# VS Code
-.vscode/
-
-# Cache Hugging Face
-.cache/

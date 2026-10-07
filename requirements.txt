@@ -1,0 +1,11 @@
+google-genai==2.25.0
+livekit-agents==1.8.3
+livekit-plugins-cartesia==1.8.3
+livekit-plugins-deepgram==1.8.3
+livekit-plugins-elevenlabs==1.8.3
+livekit-plugins-groq==1.8.3
+livekit-plugins-silero==1.8.3
+livekit-plugins-turn-detector==1.8.3
+openai==2.54.0
+python-dotenv==1.2.3
+requests==2.34.2
