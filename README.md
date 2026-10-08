@@ -200,3 +200,208 @@ make console   # parler à Miki depuis le terminal
 ```
 
 Les transcriptions, fiches et mesures de latence de chaque appel sont enregistrées dans `sessions/`, qui n'est pas versionné.
+
+---
+
+# Miki — The voice assistant that answers every 115 call
+
+> Today, **only 11% of calls to 115 are handled**.
+> Miki picks up all the others, gathers each caller's situation, and forwards it to call handlers with a priority score.
+> And because she answers everyone, she finally provides a reliable picture of who calls 115.
+
+<!-- TODO: cite the source for these figures (11%, 2-hour wait) -->
+
+## The problem
+
+At 115, the emergency social number for homeless people, there are far too few shelter beds and call handlers compared with call volume. Call handlers therefore have to filter calls to prioritize the most urgent situations.
+
+But even priority callers are, for the most part, never supported:
+
+- **89% of calls are never handled**, including those from pregnant women, people with disabilities, or families with children.
+- For the 11% who are lucky enough to reach someone, **the average wait reaches 2 hours**, and most will not be considered priority.
+- Hours of waiting, then, for a response that is often negative.
+- Because most calls are never answered, **statistics on callers are unreliable**. Yet FAS and DIHAL need them to steer emergency accommodation and justify resources.
+
+## The solution: Miki
+
+Miki is an AI voice assistant that supports callers while they wait.
+
+- **She answers all calls simultaneously.** No one is left without a response.
+- **She listens and asks simple questions**, one at a time, gently: identity, situation, time spent on the street, location, and special cases (pregnancy, disability, health, children, pet).
+- **She has the information validated** by reading it back to the person.
+- **She automatically creates a file**, with a **priority score**, so the most urgent situations appear first for call handlers.
+
+### Priority score
+
+The score is calculated by a fixed rubric, not by AI: the AI extracts facts, the rubric decides. The score is therefore transparent, reproducible, and auditable.
+
+| Score | Level | Criteria |
+|---|---|---|
+| 5 | Life-threatening | Life-threatening danger, violence, unaccompanied minor |
+| 4 | Very high | Children present, pregnancy, health problem |
+| 3 | High | 65 and over, disability, first night on the street |
+| 2 | Medium | No solution for tonight |
+| 1 | Low | None of these criteria |
+
+If the person mentions life-threatening danger (malaise, serious injury, suicidal thoughts, ongoing violence), Miki immediately directs them to 15 or 112.
+
+## What it changes
+
+- **For callers**: everyone gets a file, without spending hours on the phone.
+- **For call handlers**: files arrive already sorted by priority, making it possible to handle emergencies first.
+- **For FAS and DIHAL**: statistics on all callers, not just those who were answered (see below).
+
+## Finally reliable statistics
+
+This is Miki's other major contribution.
+
+### Today: we only know a small portion of callers
+
+115 statistics are based on answered calls. But 89% of calls are never answered: we do not know who these people are, where they are, or what they need. The real demand for emergency accommodation is therefore largely invisible, and the figures used to steer the system reflect only a small part of reality.
+
+### With Miki: every call becomes data
+
+Because Miki answers all calls, each one produces a structured record, always in the same format. Aggregated and anonymized, these records make it possible to measure:
+
+- **the real volume of demand**, including demand that does not result in any support;
+- **the profile of callers**: age, sex, single people or families, number and age of children;
+- **vulnerable groups**: share of pregnant women, people with disabilities, sick people, people aged 65 and over, or unaccompanied minors;
+- **how long people have been on the street**, including the number of people spending their first night there;
+- **the geography of needs**: where the people calling are located, city by city and neighborhood by neighborhood;
+- **the distribution of priority levels**, to know how many urgent situations remain without a solution;
+- **changes over time**: by hour, day, season, for example during a cold snap.
+
+### What it is for
+
+For FAS, DIHAL, and SIAOs, this data is a goldmine:
+
+- **steering emergency accommodation**: opening beds where demand is highest, anticipating peaks;
+- **adapting supply to populations**: beds for families, pregnant women, accessible to people with disabilities, accepting pets;
+- **justifying resources** to public authorities with figures that cover all demand, not just a fraction.
+
+One point of vigilance: the same person may call several times. To count people and not just calls, calls from the same person will need to be matched, while complying with GDPR.
+
+## Where the project stands
+
+### The vision
+
+Miki answers every 115 call, without waiting and in parallel. Every caller leaves with a created file, call handlers process files in order of priority, and institutions finally have reliable figures.
+
+### What works today (prototype)
+
+- A real-time voice conversation in French, tested from a computer (microphone and speaker).
+- A complete call flow: greeting, listening, consent from the person, questions, read-back, and validation.
+- A structured record filled in automatically as the conversation progresses.
+- Priority score calculation and redirection to 15 or 112 in case of life-threatening danger.
+- Measurement of latency for each exchange and recording of each call locally.
+
+### What remains to be built
+
+- Telephony integration (SIP) to receive real calls, several at the same time.
+- The call handler interface, with the queue of files sorted by priority.
+- Secure storage of files (see the GDPR section).
+- Aggregation of records into anonymized statistics, with a dashboard for FAS and DIHAL.
+- Matching calls from the same person, to count people and not just calls.
+- Real-world tests with 115 call handlers.
+
+## Personal data and GDPR
+
+Miki collects sensitive data within the meaning of the GDPR (Article 9), including health, pregnancy, and disability data. The project is designed to handle it carefully:
+
+- **Transparency**: Miki announces from the start that she is an artificial intelligence, and asks for the person's consent before asking questions.
+- **Minimization**: only information useful for support is requested, and the person may refuse to answer any question.
+- **Anonymized statistics**: data transmitted to institutions is aggregated and does not allow people to be identified.
+
+Before production, it will be necessary to:
+
+- host data with an HDS-certified provider (health data hosting provider);
+- use AI providers hosted in Europe, or models hosted internally;
+- set a retention period for files;
+- carry out a data protection impact assessment (DPIA) with the data protection officer of the 115 operator.
+
+## Technical operation
+
+Miki is a voice agent built on [LiveKit Agents](https://github.com/livekit/agents), an open-source framework for real-time voice agents. The main challenge is **latency**: for a conversation to feel natural, Miki must respond in under about one second. The architecture is therefore designed so that nothing slow is in the response path.
+
+### The pipeline
+
+```
+                  Caller (voice)
+                        │
+                        ▼
+      Silero VAD + turn detector
+                        │
+                        ▼
+      Deepgram Nova-3 ──────► transcription (French)
+                        │
+          ┌─────────────┴──────────────┐
+          ▼                            ▼
+   TALKER (Groq)                THINKER (Groq / Gemini)
+   fast, short,                 in parallel: record,
+   spoken reply      ◄──────   call phase, instruction
+          │          instruction       │
+          │                            ▼
+          │                  priority rubric (1 to 5)
+          ▼
+   ElevenLabs Flash v2.5 ──► Miki's voice
+```
+
+### The building blocks
+
+| Step | Technology | Role |
+|---|---|---|
+| Voice detection | **Silero VAD** | Detects when the person is speaking or silent |
+| Turn end | **LiveKit turn detector** | Guesses whether the sentence is finished; Miki waits up to 3 s if the person seems to be searching for words |
+| Transcription | **Deepgram Nova-3** (French) | Converts voice to text, in streaming |
+| Talker | **Groq** (Qwen, or GPT-OSS) | Generates Miki's reply very quickly, without long reasoning |
+| Thinker | **GPT-OSS 120B on Groq**, with possible fallback to **Gemini** | Analyzes the whole conversation, fills the record, and guides the talker |
+| Speech synthesis | **ElevenLabs Flash v2.5** | Gives Miki her voice, in French, with a slightly slowed rate (0.9) so she is easy to understand |
+| Alternative synthesis | **Cartesia Sonic-3** | Another possible voice, via `TTS_PROVIDER=cartesia` |
+
+### Two brains: the talker and the thinker
+
+A single model cannot be both very fast and very rigorous. Miki therefore uses two:
+
+- **The talker** is a fast model that responds at each turn. It follows the instructions in `prompts.py`: short sentences, one question at a time, formal "vous" form, empathy.
+- **The thinker** is a more powerful model that runs in parallel, without ever blocking the conversation. After each caller turn, it rereads the entire transcript and produces structured JSON: the caller's record, missing information, the call phase (listening, collection, verification, support), and an instruction for the talker's next turn.
+
+The talker receives the updated record and the thinker's instruction at each turn. It therefore never asks again for information already given, even if the person gave it out of order.
+
+If the thinker detects a **life-threatening danger**, it interrupts the flow and immediately directs the person to 15 or 112.
+
+### Reliability
+
+- **Deterministic priority score**: the thinker only extracts factual criteria (true or false); the score is calculated by code, from a fixed rubric. The result is reproducible and auditable.
+- **Fallback between models**: the thinker can try several models in order (`THINKER_MODELS`) if one is overloaded or out of quota.
+- **Final analysis**: at the end of the call, the thinker performs one last analysis to incorporate the final exchanges.
+- **Latency measurement**: each exchange is timed, step by step (turn end, transcription, talker, speech synthesis), with a target of 600 ms. A summary (median and P95) is produced at the end of each call.
+
+### What each call produces
+
+At the end of the call, two files are written to `sessions/`:
+
+- `…-appel.json`: the complete record (identity, situation, location, special cases, criteria, priority score) and the transcript;
+- `…-latence.csv`: latency measurements for each exchange.
+
+It is this record, always in the same format, that will feed the call handler interface and the statistics.
+
+### Files
+
+| File | Role |
+|---|---|
+| `agent.py` | The voice agent: pipeline, thinker, priority score, latency measurement, call recording |
+| `prompts.py` | The talker and thinker instructions, and the greeting message |
+| `Makefile` | Installation and launch |
+| `.env.example` | The list of API keys and settings (models, voice, rate) |
+
+## Installation and launch
+
+Prerequisites: Python 3 and API keys for Deepgram, Groq, ElevenLabs (and optionally Google for Gemini).
+
+```bash
+make install   # creates the venv and installs dependencies
+make env       # creates .env, then fill in the keys
+make console   # talk to Miki from the terminal
+```
+
+Transcriptions, records, and latency measurements for each call are saved in `sessions/`, which is not version-controlled.
