@@ -1,6 +1,6 @@
 # Miki — l'assistante vocale qui répond à chaque appel du 115
 
-> Aujourd'hui, **seuls 11 % des appels au 115 sont traités**.
+> Aujourd'hui, **seuls 27% des appels au 115 sont traités**.
 > Miki décroche tous les autres, recueille la situation de chaque appelant et la transmet aux écoutants avec un score de priorité.
 > Et parce qu'elle répond à tout le monde, elle donne enfin une image fiable de qui appelle le 115.
 
@@ -205,7 +205,7 @@ Les transcriptions, fiches et mesures de latence de chaque appel sont enregistr�
 
 # Miki — The voice assistant that answers every 115 call
 
-> Today, **only 11% of calls to 115 are handled**.
+> Today, **only 27% of calls to 115 are handled**.
 > Miki picks up all the others, gathers each caller's situation, and forwards it to call handlers with a priority score.
 > And because she answers everyone, she finally provides a reliable picture of who calls 115.
 
