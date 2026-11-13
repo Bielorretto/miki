@@ -1,3 +1,9 @@
+
+
+https://github.com/user-attachments/assets/e36c7ad2-1fa8-4332-8e05-84d8bf765383
+
+
+
 # Miki — l'assistante vocale qui répond à chaque appel du 115
 
 > Aujourd'hui, **seuls 27% des appels au 115 sont traités**.
