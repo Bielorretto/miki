@@ -30,9 +30,12 @@ LIBELLE = re.compile(r"(^|\n)[ \t]*(?:[-*•]|\d+[.)])[ \t]*\**([^\n:*]{1,30}?)\
 # Fiche en cours, tenue à jour en parallèle par un petit modèle : le penseur sait ce qui est déjà recueilli
 # (il ne redemande pas une durée déjà donnée, n'insiste pas après un refus).
 SUIVI = """Tu lis la transcription d'un appel au 115 entre l'assistant vocal (IA) et l'appelant.
-Tiens à jour ce que l'appelant a DÉJÀ dit. Réponds en JSON avec les clés : prenom, nom, age, sexe, situation, duree_a_la_rue, sante, refus.
+Tiens à jour ce que l'appelant a DÉJÀ dit. Réponds en JSON avec les clés : pour_qui, menage, sante, ville, rappel, prenom, nom, naissance, sexe, animal, duree_a_la_rue, refus.
 - Valeurs courtes en français, telles que l'appelant les a dites (orthographe épelée et confirmée pour prenom et nom, avec « confirmé » ou « à confirmer »).
-- situation : seul ou accompagné, enfants, grossesse, besoin urgent. sante : santé, handicap, douleur.
+- pour_qui : « pour lui-même » ou pour qui il appelle (proche, passant, association). menage : seul ou avec qui, âge de chaque enfant.
+- sante : grossesse, handicap, mobilité, maladie, sortie d'hôpital, ou « rien de particulier ». ville : où il se trouve ce soir.
+- rappel : si l'écoutant peut le rappeler à ce numéro (oui, non, autre numéro). naissance : date, année ou âge. animal : lequel, ou « aucun ».
+- duree_a_la_rue : depuis quand, et si c'est sa première nuit dehors.
 - refus : liste des informations que l'appelant ne veut pas ou ne peut pas donner.
 - null si l'information n'a pas encore été donnée. N'invente rien, n'interprète rien."""
 
@@ -81,8 +84,11 @@ class Penseur:
         """Ce qui est déjà recueilli, en une ligne, pour le penseur."""
         if not self.suivi:
             return None
-        noms = {"prenom": "prénom", "nom": "nom", "age": "âge", "sexe": "sexe", "situation": "situation",
-                "duree_a_la_rue": "depuis quand à la rue", "sante": "santé"}
+        # Dans l'ordre d'importance du rôle 115 : le plus utile à l'écoutant d'abord.
+        noms = {"pour_qui": "pour qui il appelle", "menage": "qui a besoin d'un hébergement", "sante": "santé",
+                "ville": "ville ce soir", "rappel": "rappel à ce numéro", "prenom": "prénom", "nom": "nom",
+                "naissance": "date de naissance", "sexe": "sexe", "animal": "animal",
+                "duree_a_la_rue": "depuis quand à la rue"}
         connu = [f"{n} : {self.suivi[k]}" for k, n in noms.items() if self.suivi.get(k) not in (None, "", [])]
         refus = self.suivi.get("refus") or []
         if not connu and not refus:
