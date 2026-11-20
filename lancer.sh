@@ -5,7 +5,7 @@
 #   bash lancer.sh 2 --penseur groq   → programme 2 (cascade) + options
 #   bash lancer.sh 3          → programme 3 (Eleven Realtime)
 #   bash lancer.sh 4          → le numéro Twilio appelle la cascade (laisser tourner)
-#   bash lancer.sh 5          → le numéro Twilio appelle « live » (parleur rapide + penseur GPT-5.5 en coulisses)
+#   bash lancer.sh 5          → le numéro Twilio parle à GPT-Live (+ GPT-5.5 en coulisses)
 set -e
 cd "$(dirname "$0")"
 
@@ -15,7 +15,7 @@ if [ -z "$choix" ]; then
   echo "2) cascade   (Deepgram → penseur → ElevenLabs)"
   echo "3) eleven    (Eleven Realtime v1 Max, voix Lucie)"
   echo "4) téléphone (le numéro Twilio appelle la cascade)"
-  echo "5) live      (téléphone : parleur rapide + penseur GPT-5.5 en coulisses, comme GPT-Live)"
+  echo "5) live      (téléphone : GPT-Live, le modèle du vocal ChatGPT, + GPT-5.5 en coulisses)"
   read -rp "Choix [1/2/3/4/5] : " ligne
   # On peut aussi écrire les options à la suite du choix : « 4 --appeler 06… »
   set -- $ligne

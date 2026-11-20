@@ -76,12 +76,6 @@ class Penseur:
         self.suivi: dict | None = None
         self._suivi_tache: asyncio.Task | None = None
         self._suivi_modele = modele_juge(env("SUIVI", "groq")) if suivi else None
-        # Programme 5 (live) : note interne de plus (réponse du penseur de fond), consigne d'une prise de parole
-        # spontanée (sans nouvelle phrase de l'appelant), et rappel quand le modèle demande à réfléchir (<PENSER>).
-        self.note: str | None = None
-        self.consigne: str | None = None
-        self.sur_penser = None  # fonction (question à étudier, dernière phrase de l'appelant)
-        self.attente = "Je regarde ça, un instant."  # dite si le modèle appelle l'outil « penser » sans rien dire avant
 
     def _etat(self) -> str | None:
         """Ce qui est déjà recueilli, en une ligne, pour le penseur."""
@@ -138,8 +132,8 @@ class Penseur:
         if texte_utilisateur:
             messages.append({"role": "user", "content": texte_utilisateur})
         else:
-            messages.append({"role": "user", "content": self.consigne or "(L'appel commence : salue l'utilisateur en une phrase courte.)"})
-        if (etat := "\n\n".join(e for e in (self._etat(), self.note) if e)):
+            messages.append({"role": "user", "content": "(L'appel commence : salue l'utilisateur en une phrase courte.)"})
+        if (etat := self._etat()) is not None:
             # La note va à la fin des consignes du début : gpt-oss n'attend des consignes qu'au début de la conversation
             # (un message « system » au milieu le fait dérailler : il récite son raisonnement, « Très très très… »).
             messages[0] = {"role": "system", "content": f"{messages[0]['content']}\n\n{etat}"}
@@ -189,8 +183,6 @@ class Penseur:
         if cache is not None:
             if re.search(r"FIN\s*/?>", cache):
                 self.fin = True  # l'IA a dit au revoir (consigne : balise <FIN>) : l'appel se termine après sa voix
-            if self.sur_penser and (m := re.search(r"PENSER\s*>(.*?)(?:<|$)", cache, re.S)) and m.group(1).strip():
-                self.sur_penser(m.group(1).strip(), texte_utilisateur)
             if (m := re.search(r"FICHE\s*>(.*)", cache, re.S)) is not None:  # FICHE avant ou après FIN
                 self.fiche = re.sub(r"<?FIN\s*/?>", "", m.group(1))
 
@@ -219,32 +211,19 @@ class Penseur:
                             raise erreur
                         continue
                     self.secours_utilise = i > 0
-                    outil = ""  # programme 5 : arguments de l'outil « penser » (le modèle confie une question au penseur de fond)
                     async for ligne in r.aiter_lines():
                         if not ligne.startswith("data:"):
                             continue
                         d = ligne[5:].strip()
                         if d == "[DONE]":
-                            break
+                            return
                         try:
-                            ch = json.loads(d)["choices"][0]["delta"]
+                            delta = json.loads(d)["choices"][0]["delta"].get("content") or ""
                         except (KeyError, IndexError, json.JSONDecodeError):
                             continue
-                        for tc in ch.get("tool_calls") or []:
-                            outil += (tc.get("function") or {}).get("arguments") or ""
-                        delta = ch.get("content") or ""
                         if delta:
                             parti = True
                             yield delta
-                    if outil:
-                        try:
-                            question = str(json.loads(outil).get("question") or "").strip()
-                        except (json.JSONDecodeError, AttributeError):
-                            question = outil.strip()
-                        if question:
-                            if not parti:
-                                yield self.attente + " "
-                            yield f"<PENSER>{question}</PENSER>"
                     return
             except (httpx.ConnectError, httpx.ConnectTimeout, httpx.ReadTimeout, httpx.RemoteProtocolError):
                 if dernier or parti:

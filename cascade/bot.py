@@ -78,7 +78,7 @@ class BotCascade(Conversation):
                 fixe, self.phrase_fixe = self.phrase_fixe, None
                 yield fixe
                 return
-            if self._question is None and self.cfg.accueil and self.penseur.consigne is None:
+            if self._question is None and self.cfg.accueil:
                 yield self.cfg.accueil  # phrase d'accueil fixe : pas besoin du penseur
                 return
             premiere = True

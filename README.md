@@ -208,7 +208,7 @@ Chaque appel crée un dossier `sessions/<date>_<programme>/`, qui n'est pas vers
 | 2 | `cascade` | La cascade de Miki, au micro de l'ordinateur ou du téléphone |
 | 3 | `eleven` | ElevenLabs Realtime, pour comparer |
 | 4 | `appel` | **Miki au téléphone** : le numéro Twilio est branché sur la cascade |
-| 5 | `live` | Expérimental, au téléphone : un parleur rapide (gpt-oss-20b) et un penseur de fond (OpenAI gpt-5.5) qu'il consulte par function calling pour les questions difficiles |
+| 5 | `live` | Expérimental, au téléphone : l'appel parle directement à GPT-Live 1.1 (le modèle du mode vocal de ChatGPT, full-duplex, voix française « brise »), qui confie les questions de fond à GPT-5.5 en coulisses ; fiche rédigée par GPT-5.5 |
 
 ### Les fichiers
 
@@ -216,7 +216,7 @@ Chaque appel crée un dossier `sessions/<date>_<programme>/`, qui n'est pas vers
 appel/       Miki au téléphone : serveur websocket Twilio, tunnel Cloudflare, branchement du numéro
 cascade/     oreille Deepgram, penseur, voix ElevenLabs, rédaction du dossier (fiche.py)
 commun/      écoute, audio, filtre, juge, empreinte vocale, conversation (chef d'orchestre), rôles, journal
-live/        programme 5 (parleur + penseur de fond)
+live/        programme 5 (pont Twilio ⇄ GPT-Live)
 realtime/    programme 1 (OpenAI Realtime)
 eleven/      programme 3 (ElevenLabs Realtime)
 pc/          installation et lancement sur Mac
@@ -456,7 +456,7 @@ Each call creates a folder `sessions/<date>_<program>/`, which is not versioned:
 | 2 | `cascade` | Miki's cascade, on the computer's or phone's microphone |
 | 3 | `eleven` | ElevenLabs Realtime, for comparison |
 | 4 | `appel` | **Miki on the phone**: the Twilio number is connected to the cascade |
-| 5 | `live` | Experimental, on the phone: a fast talker (gpt-oss-20b) and a background thinker (OpenAI gpt-5.5) it consults through function calling for hard questions |
+| 5 | `live` | Experimental, on the phone: the call talks directly to GPT-Live 1.1 (the model behind ChatGPT voice, full-duplex, French voice "brise"), which hands hard questions to GPT-5.5 in the background; case file written by GPT-5.5 |
 
 ### Files
 
@@ -464,7 +464,7 @@ Each call creates a folder `sessions/<date>_<program>/`, which is not versioned:
 appel/       Miki on the phone: Twilio websocket server, Cloudflare tunnel, number wiring
 cascade/     Deepgram ear, thinker, ElevenLabs voice, file writing (fiche.py)
 commun/      listening, audio, filter, judge, voiceprint, conversation (orchestrator), roles, log
-live/        program 5 (talker + background thinker)
+live/        program 5 (Twilio ⇄ GPT-Live bridge)
 realtime/    program 1 (OpenAI Realtime)
 eleven/      program 3 (ElevenLabs Realtime)
 pc/          install and launch on Mac

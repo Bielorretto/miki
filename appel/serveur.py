@@ -83,9 +83,9 @@ def ouvrir_tunnel() -> tuple[subprocess.Popen, str]:
 # ------------------------------------------------------------------ un appel
 
 class Appel:
-    def __init__(self, cfg: Config, ws, classe=BotCascade) -> None:
+    def __init__(self, cfg: Config, ws) -> None:
         self.ws = ws
-        self.bot = classe(cfg)
+        self.bot = BotCascade(cfg)
         self.loop = asyncio.get_running_loop()
         self.stream_sid: str | None = None
         self.entree: queue.Queue[bytes | None] = queue.Queue()
@@ -150,7 +150,8 @@ class Appel:
 
 # ------------------------------------------------------------------ serveur
 
-async def servir(cfg: Config, appeler: str | None = None, classe=BotCascade) -> None:
+async def servir(cfg: Config | None, appeler: str | None = None, gerer=None) -> None:
+    """gerer : coroutine (websocket de l'appel) à la place de la cascade (programme 5 : GPT-Live)."""
     jeton = secrets.token_urlsafe(16)
 
     def requete(connexion, req):
@@ -168,7 +169,7 @@ async def servir(cfg: Config, appeler: str | None = None, classe=BotCascade) -> 
         return Response(404, "Not Found", Headers([("Content-Type", "text/plain"), ("Content-Length", "0")]), b"")
 
     async def appel(ws):
-        await Appel(cfg, ws, classe).gerer()
+        await (gerer(ws) if gerer else Appel(cfg, ws).gerer())
 
     async with websockets.serve(appel, "127.0.0.1", PORT, process_request=requete, max_size=None):
         tunnel, adresse = await asyncio.to_thread(ouvrir_tunnel)
@@ -185,7 +186,8 @@ async def servir(cfg: Config, appeler: str | None = None, classe=BotCascade) -> 
             tunnel.kill()
 
 
-def main(classe=BotCascade) -> None:
+def numero_a_appeler() -> str | None:
+    """--appeler 06… (retiré de la ligne de commande), au format +33…."""
     import sys
 
     appeler = None
@@ -195,10 +197,15 @@ def main(classe=BotCascade) -> None:
         if appeler.startswith("0"):
             appeler = "+33" + appeler[1:]  # 06 12 34 56 78 → +33612345678
         del sys.argv[i : i + 2]
-    cfg = configuration(classe, audio_defaut="twilio")
+    return appeler
+
+
+def main() -> None:
+    appeler = numero_a_appeler()
+    cfg = configuration(BotCascade, audio_defaut="twilio")
     cfg.audio = "twilio"
     try:
-        asyncio.run(servir(cfg, appeler, classe))
+        asyncio.run(servir(cfg, appeler))
     except KeyboardInterrupt:
         print("\nServeur arrêté. (Pour rendre le numéro à l'ancien callbot : .venv/bin/python -m appel.twilio --remettre)")
 
