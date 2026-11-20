@@ -1,5 +1,3 @@
-
-
 https://github.com/user-attachments/assets/88b51066-c43c-43fe-a5af-2f40df1b1937
 
 
@@ -7,7 +5,7 @@ https://github.com/user-attachments/assets/88b51066-c43c-43fe-a5af-2f40df1b1937
 # Miki — l'assistante vocale qui répond à chaque appel du 115
 
 > Aujourd'hui, **seuls 27% des appels au 115 sont traités**.
-> Miki décroche tous les autres, recueille la situation de chaque appelant et la transmet aux écoutants avec un score de priorité.
+> Miki décroche tous les autres, recueille la situation de chaque appelant et la transmet aux écoutants dans un dossier.
 > Et parce qu'elle répond à tout le monde, elle donne enfin une image fiable de qui appelle le 115.
 
 <!-- TODO : citer la source des chiffres (11 %, 2 h d'attente) -->
@@ -25,16 +23,19 @@ Mais même les personnes prioritaires ne sont, pour la plupart, jamais prises en
 
 ## La solution : Miki
 
-Miki est une assistante vocale à intelligence artificielle qui prend en charge les appelants pendant leur attente.
+Miki est une assistante vocale à intelligence artificielle qui prend en charge les appelants pendant leur attente. On l'appelle sur un vrai numéro de téléphone.
 
-- **Elle répond à tous les appels, en simultané.** Personne ne reste sans réponse.
-- **Elle écoute et pose des questions simples**, une à la fois, avec douceur : identité, situation, temps passé à la rue, localisation et cas particuliers (grossesse, handicap, santé, enfants, animal).
-- **Elle fait valider les informations** en les relisant à la personne.
-- **Elle crée automatiquement un dossier**, accompagné d'un **score de priorité**, pour que les situations les plus urgentes apparaissent en premier aux écoutants.
+- **Elle décroche et se présente** : elle annonce qu'elle est une intelligence artificielle et demande l'accord de la personne avant de poser ses questions.
+- **Elle écoute et pose des questions simples**, une à la fois, avec douceur : prénom et nom, âge, homme ou femme, situation (seule ou accompagnée, enfants, grossesse, santé, handicap, besoin urgent) et depuis quand la personne est à la rue. Elle ne demande jamais d'adresse.
+- **Elle fait épeler le prénom et le nom**, puis relit les lettres pour les faire confirmer.
+- **Elle résume ce qu'elle a compris** et le fait valider, puis demande s'il reste des questions et raccroche avec l'accord de la personne.
+- **Elle rédige automatiquement un dossier** à la fin de l'appel, pour l'écoutant qui prendra le relais.
 
-### Le score de priorité
+Si la personne décrit un danger vital immédiat (malaise, blessure grave, violences en cours, idées suicidaires), Miki lui dit d'appeler le 15 ou le 112. Elle ne promet jamais de place ni de délai, et ne répond pas aux questions sans rapport avec l'appel.
 
-Le score est calculé par une grille fixe, et non par l'IA : l'IA extrait les faits, la grille décide. Le score est donc transparent, reproductible et vérifiable.
+### Le score de priorité (prévu)
+
+Le prochain objectif est d'ajouter au dossier un score de priorité calculé par une grille fixe, et non par l'IA : l'IA extrait les faits, la grille décide. Le score serait ainsi transparent, reproductible et vérifiable.
 
 | Score | Niveau | Critères |
 |---|---|---|
@@ -44,12 +45,10 @@ Le score est calculé par une grille fixe, et non par l'IA : l'IA extrait les fa
 | 2 | Moyenne | Sans solution pour ce soir |
 | 1 | Basse | Aucun de ces critères |
 
-Si la personne évoque un danger vital (malaise, blessure grave, idées suicidaires, violence en cours), Miki l'oriente immédiatement vers le 15 ou le 112.
-
 ## Ce que ça change
 
 - **Pour les appelants** : chacun obtient un dossier, sans passer des heures au téléphone.
-- **Pour les écoutants** : les dossiers arrivent déjà triés par priorité, ce qui permet de traiter les urgences en premier.
+- **Pour les écoutants** : les dossiers arrivent déjà remplis, ce qui leur fait gagner du temps sur chaque appel.
 - **Pour la FAS et la DIHAL** : des statistiques sur l'ensemble des appelants, et pas seulement sur ceux qui ont été décrochés (voir ci-dessous).
 
 ## Des statistiques enfin fiables
@@ -58,26 +57,25 @@ C'est l'autre apport majeur de Miki.
 
 ### Aujourd'hui : on ne connaît qu'une petite partie des appelants
 
-Les statistiques du 115 reposent sur les appels décrochés. Or 89 % des appels ne le sont jamais : on ne sait pas qui sont ces personnes, où elles se trouvent ni ce dont elles ont besoin. La demande réelle d'hébergement d'urgence est donc largement invisible, et les chiffres utilisés pour piloter le dispositif ne reflètent qu'une petite partie de la réalité.
+Les statistiques du 115 reposent sur les appels décrochés. Or 89 % des appels ne le sont jamais : on ne sait pas qui sont ces personnes ni ce dont elles ont besoin. La demande réelle d'hébergement d'urgence est donc largement invisible, et les chiffres utilisés pour piloter le dispositif ne reflètent qu'une petite partie de la réalité.
 
 ### Avec Miki : chaque appel devient une donnée
 
-Comme Miki répond à tous les appels, chacun produit une fiche structurée, toujours au même format. Agrégées et anonymisées, ces fiches permettent de mesurer :
+Comme Miki répond à tous les appels, chacun produit un dossier structuré, toujours au même format. Agrégés et anonymisés, ces dossiers permettent de mesurer :
 
 - **le volume réel de la demande**, y compris celle qui n'aboutit à aucune prise en charge ;
-- **le profil des appelants** : âge, sexe, personnes seules ou familles, nombre et âge des enfants ;
-- **les publics vulnérables** : part de femmes enceintes, de personnes handicapées, malades, âgées de 65 ans et plus, ou de mineurs seuls ;
+- **le profil des appelants** : âge, sexe, personnes seules ou familles, présence d'enfants ;
+- **les publics vulnérables** : part de femmes enceintes, de personnes handicapées ou malades ;
 - **l'ancienneté à la rue**, et notamment le nombre de personnes qui y passent leur première nuit ;
-- **la géographie des besoins** : où se trouvent les personnes qui appellent, ville par ville et quartier par quartier ;
-- **la répartition des niveaux de priorité**, pour savoir combien de situations urgentes restent sans solution ;
+- **les langues parlées** par les appelants ;
 - **l'évolution dans le temps** : par heure, par jour, par saison, par exemple lors d'une vague de froid.
 
 ### À quoi ça sert
 
 Pour la FAS, la DIHAL et les SIAO, ces données sont une mine d'or :
 
-- **piloter l'hébergement d'urgence** : ouvrir des places là où la demande est la plus forte, anticiper les pics ;
-- **adapter l'offre aux publics** : places pour familles, pour femmes enceintes, accessibles aux personnes handicapées, acceptant les animaux ;
+- **piloter l'hébergement d'urgence** : anticiper les pics de demande ;
+- **adapter l'offre aux publics** : places pour familles, pour femmes enceintes, accessibles aux personnes handicapées ;
 - **justifier les moyens** auprès des pouvoirs publics avec des chiffres qui couvrent l'ensemble de la demande, et non une fraction.
 
 Un point de vigilance : une même personne peut appeler plusieurs fois. Pour compter des personnes et pas seulement des appels, il faudra rapprocher les appels d'une même personne, tout en respectant le RGPD.
@@ -90,19 +88,24 @@ Miki décroche chaque appel du 115, sans attente et en parallèle. Chaque appela
 
 ### Ce qui fonctionne aujourd'hui (prototype)
 
-- Une conversation vocale en français, en temps réel, testée depuis l'ordinateur (micro et haut-parleur).
-- Un déroulé d'appel complet : accueil, écoute, accord de la personne, questions, relecture et validation.
-- Une fiche structurée remplie automatiquement au fil de la conversation.
-- Le calcul du score de priorité et la redirection vers le 15 ou le 112 en cas de danger vital.
-- La mesure de la latence de chaque échange et l'enregistrement de chaque appel en local.
+- **De vrais appels téléphoniques** : un numéro Twilio est relié au programme ; on appelle le numéro, ou Miki appelle le numéro de son choix (`--appeler`).
+- Une conversation vocale en français, en temps réel, avec une réponse qui commence en moins d'une seconde environ.
+- Un déroulé d'appel complet : accueil, accord, questions, épellation du prénom et du nom, résumé, validation, « d'autres questions ? », au revoir et raccrochage.
+- Une conversation robuste au bruit et aux interruptions : la télé, la rue ou un toussotement ne coupent pas Miki ; si la personne parle vraiment, Miki s'arrête.
+- Une relance après 3 secondes de silence, et une demande de répétition quand la transcription n'a pas de sens.
+- Un dossier JSON rédigé à la fin de chaque appel, même si la personne a raccroché avant la fin.
+- La redirection vers le 15 ou le 112 en cas de danger vital.
+- Un journal complet de chaque appel (événements à la milliseconde, latences, audio), enregistré en local.
 
 ### Ce qui reste à construire
 
-- Le raccordement à la téléphonie (SIP) pour recevoir de vrais appels, plusieurs en même temps.
+- Le score de priorité, calculé par une grille fixe à partir du dossier.
+- Plusieurs appels en même temps sur le même numéro, et un hébergement permanent (aujourd'hui, le programme tourne sur une machine personnelle derrière un tunnel).
 - L'interface des écoutants, avec la file des dossiers triés par priorité.
 - Un stockage sécurisé des dossiers (voir la section RGPD).
-- L'agrégation des fiches en statistiques anonymisées, avec un tableau de bord pour la FAS et la DIHAL.
+- L'agrégation des dossiers en statistiques anonymisées, avec un tableau de bord pour la FAS et la DIHAL.
 - Le rapprochement des appels d'une même personne, pour compter des personnes et pas seulement des appels.
+- Une meilleure reconnaissance des lettres épelées au téléphone (confusions G/J et M/N).
 - Des tests en conditions réelles avec des écoutants du 115.
 
 ## Données personnelles et RGPD
@@ -110,8 +113,8 @@ Miki décroche chaque appel du 115, sans attente et en parallèle. Chaque appela
 Miki recueille des données sensibles au sens du RGPD (article 9), notamment de santé, de grossesse et de handicap. Le projet est conçu pour les traiter avec précaution :
 
 - **Transparence** : Miki annonce dès le début qu'elle est une intelligence artificielle, et elle demande l'accord de la personne avant de poser ses questions.
-- **Minimisation** : seules les informations utiles à la prise en charge sont demandées, et la personne peut refuser de répondre à n'importe quelle question.
-- **Statistiques anonymisées** : les données transmises aux institutions sont agrégées et ne permettent pas d'identifier les personnes.
+- **Minimisation** : seules les informations utiles à la prise en charge sont demandées, jamais d'adresse, et la personne peut refuser de répondre à n'importe quelle question.
+- **Statistiques anonymisées** : les données transmises aux institutions seront agrégées et ne permettront pas d'identifier les personnes.
 
 Avant une mise en production, il faudra :
 
@@ -122,97 +125,135 @@ Avant une mise en production, il faudra :
 
 ## Fonctionnement technique
 
-Miki est un agent vocal construit sur [LiveKit Agents](https://github.com/livekit/agents), un framework open source pour les agents vocaux en temps réel. Le défi principal est la **latence** : pour qu'une conversation paraisse naturelle, Miki doit répondre en moins d'une seconde environ. L'architecture est donc pensée pour que rien de lent ne se trouve dans le chemin de la réponse.
+Miki est une **cascade** écrite en Python, sans framework d'agent vocal : oreille (transcription) → penseur (modèle de langage) → voix (synthèse vocale). Le défi principal est la **latence** : pour qu'une conversation paraisse naturelle, Miki doit répondre en moins d'une seconde environ. La voix commence donc dès la première phrase du penseur, sans attendre la fin de sa réponse, et tout ce qui est lent (dossier, suivi) se fait à côté.
 
-### Le pipeline
+### Le pipeline (appel téléphonique)
 
 ```
-                  Appelant (voix)
-                        │
-                        ▼
-      Silero VAD + détecteur de fin de tour
-                        │
-                        ▼
-      Deepgram Nova-3 ──────► transcription (français)
-                        │
-          ┌─────────────┴──────────────┐
-          ▼                            ▼
-   PARLEUR (Groq)               PENSEUR (Groq / Gemini)
-   réponse rapide,              en parallèle : fiche,
-   courte et orale    ◄──────   phase de l'appel, consigne
-          │          consigne          │
-          │                            ▼
-          │                  grille de priorité (1 à 5)
+           Appelant (téléphone)
+                   │
+                   ▼
+   Twilio Media Streams ──► websocket (son μ-law 8 kHz, dans les deux sens)
+     via un tunnel Cloudflare
+                   │
+                   ▼
+   Écoute locale : Silero (voix humaine ?) + volume
+     + Smart Turn (la phrase est-elle finie ?)
+                   │
+                   ▼
+   Deepgram nova-3 ──► texte (français)
+                   │
+                   ▼
+   Filtre + juge (gpt-oss-20b) : est-ce bien l'appelant ?
+                   │
+          ┌────────┴──────────────┐
+          ▼                       ▼
+   PENSEUR (Groq               SUIVI (gpt-oss-20b, en fond) :
+   gpt-oss-120b)    ◄───────   ce qui est déjà dit, refusé,
+   réponse mot à mot  note      ce qui manque
+          │
           ▼
-   ElevenLabs Flash v2.5 ──► voix de Miki
+   ElevenLabs v3 (voix Lucie) ──► Twilio ──► appelant
+          │
+          ▼   fin de l'appel
+   DOSSIER (gpt-oss-120b) ──► fiche.json
 ```
 
 ### Les briques
 
 | Étape | Technologie | Rôle |
 |---|---|---|
-| Détection de la voix | **Silero VAD** | Repère quand la personne parle ou se tait |
-| Fin de tour | **Détecteur de fin de tour LiveKit** | Devine si la phrase est terminée ; Miki attend jusqu'à 3 s si la personne semble chercher ses mots |
-| Transcription | **Deepgram Nova-3** (français) | Transforme la voix en texte, en streaming |
-| Parleur | **Groq** (Qwen, ou GPT-OSS) | Génère la réponse de Miki très rapidement, sans raisonnement long |
-| Penseur | **GPT-OSS 120B sur Groq**, avec repli possible sur **Gemini** | Analyse toute la conversation, remplit la fiche et guide le parleur |
-| Synthèse vocale | **ElevenLabs Flash v2.5** | Donne sa voix à Miki, en français, avec un débit légèrement ralenti (0,9) pour être bien comprise |
-| Synthèse alternative | **Cartesia Sonic-3** | Autre voix possible, via `TTS_PROVIDER=cartesia` |
+| Téléphonie | **Twilio Media Streams** + tunnel **Cloudflare** | Relie le numéro au programme ; le numéro est rebranché automatiquement à chaque lancement |
+| Détection de la voix | **Silero VAD** + volume | Distingue une voix humaine du bruit (rue, métro, télé) |
+| Fin de tour | **Smart Turn v3** | Écoute l'intonation et dit si la phrase est finie ; sinon Miki attend la suite |
+| Transcription | **Deepgram nova-3** (français) | Transforme la voix en texte, en streaming |
+| Juge | **gpt-oss-20b sur Groq** | Vérifie que ce qui a été entendu vient bien de l'appelant, et non d'une annonce ou d'une télé |
+| Penseur | **gpt-oss-120b sur Groq** (réflexion « medium »), secours **OpenAI** | Mène la conversation ; si Groq est saturé (erreur 429), OpenAI prend le relais pour que Miki ne se taise jamais |
+| Suivi | **gpt-oss-20b sur Groq**, en tâche de fond | Tient à jour ce que l'appelant a déjà dit ou refusé, pour que le penseur ne redemande rien |
+| Synthèse vocale | **ElevenLabs v3 Conversational** (voix Lucie) | Donne sa voix à Miki, en français ; Flash v2.5 possible via `ELEVEN_MODELE` |
+| Dossier | **gpt-oss-120b sur Groq**, secours OpenAI | Rédige le dossier JSON à la fin de l'appel, à partir de la transcription |
 
-### Deux cerveaux : le parleur et le penseur
+### Un modèle qui parle, d'autres qui écrivent
 
-Un seul modèle ne peut pas être à la fois très rapide et très rigoureux. Miki en utilise donc deux :
+Le modèle qui parle ne s'occupe jamais du dossier : il ne peut donc ni le réciter, ni s'en distraire. Ses consignes (`commun/roles.py`) tiennent en un seul texte court, sans contradiction : phrases courtes, une question à la fin, vouvoiement, pas de promesse, épellation des noms, 15 ou 112 en cas de danger vital.
 
-- **Le parleur** est un modèle rapide qui répond à chaque tour de parole. Il suit les instructions de `prompts.py` : phrases courtes, une seule question à la fois, vouvoiement, empathie.
-- **Le penseur** est un modèle plus puissant qui tourne en parallèle, sans jamais bloquer la conversation. Après chaque intervention de l'appelant, il relit toute la transcription et produit un JSON structuré : la fiche de l'appelant, les informations manquantes, la phase de l'appel (écoute, collecte, vérification, accompagnement) et une consigne pour le prochain tour du parleur.
+- **Le suivi** relit la conversation après chaque réponse et glisse une note interne au penseur : ce qui est acquis, ce qui a été refusé, ce qui manque.
+- **Le dossier** est rédigé à la fin par un modèle à part, à partir de la transcription. Il contient : `prenom`, `nom`, `age`, `sexe`, `situation`, `duree_a_la_rue`, `langue`, `urgence_signalee`, `consentement` et `a_verifier` (les points incertains pour l'écoutant). Il n'invente rien : `null` pour toute information inconnue ou refusée.
 
-Le parleur reçoit à chaque tour la fiche à jour et la consigne du penseur. Il ne redemande donc jamais une information déjà donnée, même si la personne l'a dite dans le désordre.
+### Le bruit et les interruptions
 
-Si le penseur détecte un **danger vital**, il interrompt le déroulé et fait immédiatement orienter la personne vers le 15 ou le 112.
-
-### Fiabilité
-
-- **Score de priorité déterministe** : le penseur extrait seulement des critères factuels (vrai ou faux) ; le score est calculé par le code, à partir d'une grille fixe. Le résultat est reproductible et vérifiable.
-- **Repli entre modèles** : le penseur peut essayer plusieurs modèles dans l'ordre (`THINKER_MODELS`) si l'un est saturé ou hors quota.
-- **Analyse finale** : à la fin de l'appel, le penseur refait une dernière analyse pour intégrer les derniers échanges.
-- **Mesure de latence** : chaque échange est chronométré, étape par étape (fin de tour, transcription, parleur, synthèse vocale), avec un objectif de 600 ms. Un résumé (médiane et P95) est produit à la fin de chaque appel.
+- **Anti-écho et anti-bruit WebRTC** sur ordinateur ; au téléphone, c'est le téléphone de l'appelant qui retire l'écho.
+- **Seul l'audio utile part à la transcription** (de 0,2 s avant la voix à 0,15 s après) : le bruit autour ne devient jamais de faux mots.
+- **Filtre du texte** : texte vide, écho de Miki ou phrase coupée sont ignorés ou mis en attente.
+- **Barge-in en deux temps** : si l'appelant parle, le son de Miki baisse ; elle ne s'arrête que si de vrais mots confirment l'interruption. Le bruit ne peut donc jamais la couper.
+- **Épellation** : quand Miki fait épeler, l'écoute attend toutes les lettres avant de répondre, et la relecture se fait sans attente.
+- **Phrases fixes pré-enregistrées** (« Pardon, pouvez-vous répéter ? ») : dites sans attendre la synthèse vocale.
 
 ### Ce que produit chaque appel
 
-À la fin de l'appel, deux fichiers sont écrits dans `sessions/` :
+Chaque appel crée un dossier `sessions/<date>_<programme>/`, qui n'est pas versionné :
 
-- `…-appel.json` : la fiche complète (identité, situation, localisation, cas particuliers, critères, score de priorité) et la transcription ;
-- `…-latence.csv` : les mesures de latence de chaque échange.
+- `fiche.json` : le dossier de l'appelant ;
+- `journal.txt` : tout ce qui s'est passé, à la milliseconde (voix détectée, fin de tour et pourquoi, texte entendu, décisions du filtre et du juge, barge-in, latences) ;
+- `session.json` : la conversation complète, y compris les morceaux ignorés ;
+- `micro.wav` et `ia.wav` : le son de l'appelant et la voix de Miki.
 
-C'est cette fiche, toujours au même format, qui alimentera l'interface des écoutants et les statistiques.
+### Les programmes
+
+`bash lancer.sh` affiche un menu :
+
+| Choix | Programme | Principe |
+|---|---|---|
+| 1 | `realtime` | OpenAI Realtime (parole → parole), au micro de l'ordinateur ou du téléphone |
+| 2 | `cascade` | La cascade de Miki, au micro de l'ordinateur ou du téléphone |
+| 3 | `eleven` | ElevenLabs Realtime, pour comparer |
+| 4 | `appel` | **Miki au téléphone** : le numéro Twilio est branché sur la cascade |
+| 5 | `live` | Expérimental, au téléphone : un parleur rapide (gpt-oss-20b) et un penseur de fond (OpenAI gpt-5.5) qu'il consulte par function calling pour les questions difficiles |
 
 ### Les fichiers
 
-| Fichier | Rôle |
-|---|---|
-| `agent.py` | L'agent vocal : pipeline, penseur, score de priorité, mesure de latence, enregistrement des appels |
-| `prompts.py` | Les instructions du parleur et du penseur, et le message d'accueil |
-| `Makefile` | Installation et lancement |
-| `.env.example` | La liste des clés API et des réglages (modèles, voix, débit) |
+```
+appel/       Miki au téléphone : serveur websocket Twilio, tunnel Cloudflare, branchement du numéro
+cascade/     oreille Deepgram, penseur, voix ElevenLabs, rédaction du dossier (fiche.py)
+commun/      écoute, audio, filtre, juge, empreinte vocale, conversation (chef d'orchestre), rôles, journal
+live/        programme 5 (parleur + penseur de fond)
+realtime/    programme 1 (OpenAI Realtime)
+eleven/      programme 3 (ElevenLabs Realtime)
+pc/          installation et lancement sur Mac
+telephone/   installation et lancement sur Android (Termux + Debian)
+outils/      tester_ecoute.py : passe un WAV dans l'écoute et montre ses décisions
+lancer.sh    une seule commande pour tout installer et lancer
+```
 
 ## Installation et lancement
 
-Prérequis : Python 3 et des clés API Deepgram, Groq, ElevenLabs (et éventuellement Google pour Gemini).
+Prérequis : Python 3 et des clés API Groq, Deepgram, ElevenLabs et OpenAI (secours), plus un compte Twilio avec un numéro pour les appels téléphoniques.
 
 ```bash
-make install   # crée le venv et installe les dépendances
-make env       # crée .env, puis remplir les clés
-make console   # parler à Miki depuis le terminal
+bash lancer.sh        # la première fois, tout s'installe (venv, dépendances, modèles) et .env est créé
+                      # mets tes clés dans .env (jamais dans le code), puis relance
+bash lancer.sh 4      # Miki au téléphone : laisse tourner, puis appelle le numéro Twilio
+bash lancer.sh 4 --appeler +336XXXXXXXX   # ou c'est Miki qui t'appelle
 ```
 
-Les transcriptions, fiches et mesures de latence de chaque appel sont enregistrées dans `sessions/`, qui n'est pas versionné.
+Sur Mac, `pc/installer_mac.sh` installe tout ; sur Android, `telephone/1_dans_termux.sh` puis `telephone/2_installer.sh`. Les options utiles :
+
+```bash
+--penseur groq|openai|mistral   # cerveau de la conversation (défaut groq)
+--juge groq|openai|mistral      # vérificateur rapide (défaut groq)
+--role 115|libre                # rôle (défaut 115)
+--langue fr|en|multi            # langue parlée (défaut fr)
+--audio fichier:essai.wav       # test sans micro : le fichier sert de micro
+```
+
+La liste des clés et des réglages (modèles, voix) est dans `.env.example`. Pour rendre le numéro Twilio à son ancienne configuration : `.venv/bin/python -m appel.twilio --remettre`.
 
 ---
 
 # Miki — The voice assistant that answers every 115 call
 
 > Today, **only 27% of calls to 115 are handled**.
-> Miki picks up all the others, gathers each caller's situation, and forwards it to call handlers with a priority score.
+> Miki picks up all the others, gathers each caller's situation, and forwards it to call handlers in a file.
 > And because she answers everyone, she finally provides a reliable picture of who calls 115.
 
 <!-- TODO: cite the source for these figures (11%, 2-hour wait) -->
@@ -230,16 +271,19 @@ But even priority callers are, for the most part, never supported:
 
 ## The solution: Miki
 
-Miki is an AI voice assistant that supports callers while they wait.
+Miki is an AI voice assistant that supports callers while they wait. She is reached through a real phone number.
 
-- **She answers all calls simultaneously.** No one is left without a response.
-- **She listens and asks simple questions**, one at a time, gently: identity, situation, time spent on the street, location, and special cases (pregnancy, disability, health, children, pet).
-- **She has the information validated** by reading it back to the person.
-- **She automatically creates a file**, with a **priority score**, so the most urgent situations appear first for call handlers.
+- **She picks up and introduces herself**: she says she is an artificial intelligence and asks for the person's consent before asking questions.
+- **She listens and asks simple questions**, one at a time, gently: first and last name, age, man or woman, situation (alone or with others, children, pregnancy, health, disability, urgent need), and how long the person has been on the street. She never asks for an address.
+- **She has the first and last name spelled out**, then reads the letters back for confirmation.
+- **She summarizes what she understood** and has it validated, then asks whether there are other questions and hangs up with the person's agreement.
+- **She automatically writes a file** at the end of the call, for the call handler who will take over.
 
-### Priority score
+If the person describes an immediate life-threatening danger (malaise, serious injury, ongoing violence, suicidal thoughts), Miki tells them to call 15 or 112. She never promises a bed or a timeframe, and does not answer questions unrelated to the call.
 
-The score is calculated by a fixed rubric, not by AI: the AI extracts facts, the rubric decides. The score is therefore transparent, reproducible, and auditable.
+### Priority score (planned)
+
+The next goal is to add a priority score to the file, calculated by a fixed rubric, not by AI: the AI extracts facts, the rubric decides. The score would therefore be transparent, reproducible, and auditable.
 
 | Score | Level | Criteria |
 |---|---|---|
@@ -249,12 +293,10 @@ The score is calculated by a fixed rubric, not by AI: the AI extracts facts, the
 | 2 | Medium | No solution for tonight |
 | 1 | Low | None of these criteria |
 
-If the person mentions life-threatening danger (malaise, serious injury, suicidal thoughts, ongoing violence), Miki immediately directs them to 15 or 112.
-
 ## What it changes
 
 - **For callers**: everyone gets a file, without spending hours on the phone.
-- **For call handlers**: files arrive already sorted by priority, making it possible to handle emergencies first.
+- **For call handlers**: files arrive already filled in, saving time on every call.
 - **For FAS and DIHAL**: statistics on all callers, not just those who were answered (see below).
 
 ## Finally reliable statistics
@@ -263,26 +305,25 @@ This is Miki's other major contribution.
 
 ### Today: we only know a small portion of callers
 
-115 statistics are based on answered calls. But 89% of calls are never answered: we do not know who these people are, where they are, or what they need. The real demand for emergency accommodation is therefore largely invisible, and the figures used to steer the system reflect only a small part of reality.
+115 statistics are based on answered calls. But 89% of calls are never answered: we do not know who these people are or what they need. The real demand for emergency accommodation is therefore largely invisible, and the figures used to steer the system reflect only a small part of reality.
 
 ### With Miki: every call becomes data
 
-Because Miki answers all calls, each one produces a structured record, always in the same format. Aggregated and anonymized, these records make it possible to measure:
+Because Miki answers all calls, each one produces a structured file, always in the same format. Aggregated and anonymized, these files make it possible to measure:
 
 - **the real volume of demand**, including demand that does not result in any support;
-- **the profile of callers**: age, sex, single people or families, number and age of children;
-- **vulnerable groups**: share of pregnant women, people with disabilities, sick people, people aged 65 and over, or unaccompanied minors;
+- **the profile of callers**: age, sex, single people or families, presence of children;
+- **vulnerable groups**: share of pregnant women, people with disabilities or illnesses;
 - **how long people have been on the street**, including the number of people spending their first night there;
-- **the geography of needs**: where the people calling are located, city by city and neighborhood by neighborhood;
-- **the distribution of priority levels**, to know how many urgent situations remain without a solution;
+- **the languages spoken** by callers;
 - **changes over time**: by hour, day, season, for example during a cold snap.
 
 ### What it is for
 
 For FAS, DIHAL, and SIAOs, this data is a goldmine:
 
-- **steering emergency accommodation**: opening beds where demand is highest, anticipating peaks;
-- **adapting supply to populations**: beds for families, pregnant women, accessible to people with disabilities, accepting pets;
+- **steering emergency accommodation**: anticipating demand peaks;
+- **adapting supply to populations**: beds for families, pregnant women, accessible to people with disabilities;
 - **justifying resources** to public authorities with figures that cover all demand, not just a fraction.
 
 One point of vigilance: the same person may call several times. To count people and not just calls, calls from the same person will need to be matched, while complying with GDPR.
@@ -295,19 +336,24 @@ Miki answers every 115 call, without waiting and in parallel. Every caller leave
 
 ### What works today (prototype)
 
-- A real-time voice conversation in French, tested from a computer (microphone and speaker).
-- A complete call flow: greeting, listening, consent from the person, questions, read-back, and validation.
-- A structured record filled in automatically as the conversation progresses.
-- Priority score calculation and redirection to 15 or 112 in case of life-threatening danger.
-- Measurement of latency for each exchange and recording of each call locally.
+- **Real phone calls**: a Twilio number is connected to the program; you call the number, or Miki calls a number of your choice (`--appeler`).
+- A real-time voice conversation in French, with replies starting in about one second or less.
+- A complete call flow: greeting, consent, questions, spelling of first and last name, summary, validation, "any other questions?", goodbye, and hang-up.
+- A conversation robust to noise and interruptions: TV, street noise, or a cough do not cut Miki off; if the person really speaks, Miki stops.
+- A follow-up after 3 seconds of silence, and a request to repeat when the transcript makes no sense.
+- A JSON file written at the end of each call, even if the person hung up early.
+- Redirection to 15 or 112 in case of life-threatening danger.
+- A complete log of each call (millisecond events, latencies, audio), saved locally.
 
 ### What remains to be built
 
-- Telephony integration (SIP) to receive real calls, several at the same time.
+- The priority score, calculated by a fixed rubric from the file.
+- Several simultaneous calls on the same number, and permanent hosting (today, the program runs on a personal machine behind a tunnel).
 - The call handler interface, with the queue of files sorted by priority.
 - Secure storage of files (see the GDPR section).
-- Aggregation of records into anonymized statistics, with a dashboard for FAS and DIHAL.
+- Aggregation of files into anonymized statistics, with a dashboard for FAS and DIHAL.
 - Matching calls from the same person, to count people and not just calls.
+- Better recognition of spelled letters over the phone (G/J and M/N confusions).
 - Real-world tests with 115 call handlers.
 
 ## Personal data and GDPR
@@ -315,8 +361,8 @@ Miki answers every 115 call, without waiting and in parallel. Every caller leave
 Miki collects sensitive data within the meaning of the GDPR (Article 9), including health, pregnancy, and disability data. The project is designed to handle it carefully:
 
 - **Transparency**: Miki announces from the start that she is an artificial intelligence, and asks for the person's consent before asking questions.
-- **Minimization**: only information useful for support is requested, and the person may refuse to answer any question.
-- **Anonymized statistics**: data transmitted to institutions is aggregated and does not allow people to be identified.
+- **Minimization**: only information useful for support is requested, never an address, and the person may refuse to answer any question.
+- **Anonymized statistics**: data transmitted to institutions will be aggregated and will not allow people to be identified.
 
 Before production, it will be necessary to:
 
@@ -327,87 +373,125 @@ Before production, it will be necessary to:
 
 ## Technical operation
 
-Miki is a voice agent built on [LiveKit Agents](https://github.com/livekit/agents), an open-source framework for real-time voice agents. The main challenge is **latency**: for a conversation to feel natural, Miki must respond in under about one second. The architecture is therefore designed so that nothing slow is in the response path.
+Miki is a **cascade** written in Python, without a voice-agent framework: ear (transcription) → thinker (language model) → voice (speech synthesis). The main challenge is **latency**: for a conversation to feel natural, Miki must respond in under about one second. The voice therefore starts from the thinker's first sentence, without waiting for the end of its reply, and everything slow (file, tracking) runs on the side.
 
-### The pipeline
+### The pipeline (phone call)
 
 ```
-                  Caller (voice)
-                        │
-                        ▼
-      Silero VAD + turn detector
-                        │
-                        ▼
-      Deepgram Nova-3 ──────► transcription (French)
-                        │
-          ┌─────────────┴──────────────┐
-          ▼                            ▼
-   TALKER (Groq)                THINKER (Groq / Gemini)
-   fast, short,                 in parallel: record,
-   spoken reply      ◄──────   call phase, instruction
-          │          instruction       │
-          │                            ▼
-          │                  priority rubric (1 to 5)
+           Caller (phone)
+                   │
+                   ▼
+   Twilio Media Streams ──► websocket (μ-law 8 kHz audio, both ways)
+     through a Cloudflare tunnel
+                   │
+                   ▼
+   Local listening: Silero (human voice?) + volume
+     + Smart Turn (is the sentence finished?)
+                   │
+                   ▼
+   Deepgram nova-3 ──► text (French)
+                   │
+                   ▼
+   Filter + judge (gpt-oss-20b): is it really the caller?
+                   │
+          ┌────────┴──────────────┐
+          ▼                       ▼
+   THINKER (Groq               TRACKER (gpt-oss-20b, background):
+   gpt-oss-120b)    ◄───────   what was already said, refused,
+   streamed reply     note      what is missing
+          │
           ▼
-   ElevenLabs Flash v2.5 ──► Miki's voice
+   ElevenLabs v3 (Lucie voice) ──► Twilio ──► caller
+          │
+          ▼   end of call
+   FILE (gpt-oss-120b) ──► fiche.json
 ```
 
 ### The building blocks
 
 | Step | Technology | Role |
 |---|---|---|
-| Voice detection | **Silero VAD** | Detects when the person is speaking or silent |
-| Turn end | **LiveKit turn detector** | Guesses whether the sentence is finished; Miki waits up to 3 s if the person seems to be searching for words |
-| Transcription | **Deepgram Nova-3** (French) | Converts voice to text, in streaming |
-| Talker | **Groq** (Qwen, or GPT-OSS) | Generates Miki's reply very quickly, without long reasoning |
-| Thinker | **GPT-OSS 120B on Groq**, with possible fallback to **Gemini** | Analyzes the whole conversation, fills the record, and guides the talker |
-| Speech synthesis | **ElevenLabs Flash v2.5** | Gives Miki her voice, in French, with a slightly slowed rate (0.9) so she is easy to understand |
-| Alternative synthesis | **Cartesia Sonic-3** | Another possible voice, via `TTS_PROVIDER=cartesia` |
+| Telephony | **Twilio Media Streams** + **Cloudflare** tunnel | Connects the number to the program; the number is rewired automatically at each launch |
+| Voice detection | **Silero VAD** + volume | Tells a human voice apart from noise (street, metro, TV) |
+| Turn end | **Smart Turn v3** | Listens to intonation and says whether the sentence is finished; otherwise Miki waits for more |
+| Transcription | **Deepgram nova-3** (French) | Converts voice to text, in streaming |
+| Judge | **gpt-oss-20b on Groq** | Checks that what was heard really comes from the caller, not an announcement or a TV |
+| Thinker | **gpt-oss-120b on Groq** ("medium" reasoning), **OpenAI** fallback | Leads the conversation; if Groq is overloaded (429 error), OpenAI takes over so Miki never goes silent |
+| Tracker | **gpt-oss-20b on Groq**, in the background | Keeps track of what the caller has already said or refused, so the thinker never asks again |
+| Speech synthesis | **ElevenLabs v3 Conversational** (Lucie voice) | Gives Miki her voice, in French; Flash v2.5 available via `ELEVEN_MODELE` |
+| File | **gpt-oss-120b on Groq**, OpenAI fallback | Writes the JSON file at the end of the call, from the transcript |
 
-### Two brains: the talker and the thinker
+### One model talks, others write
 
-A single model cannot be both very fast and very rigorous. Miki therefore uses two:
+The model that talks never handles the file: it can neither recite it nor be distracted by it. Its instructions (`commun/roles.py`) are a single short text, without contradictions: short sentences, one question at the end, formal "vous", no promises, spelling of names, 15 or 112 in case of life-threatening danger.
 
-- **The talker** is a fast model that responds at each turn. It follows the instructions in `prompts.py`: short sentences, one question at a time, formal "vous" form, empathy.
-- **The thinker** is a more powerful model that runs in parallel, without ever blocking the conversation. After each caller turn, it rereads the entire transcript and produces structured JSON: the caller's record, missing information, the call phase (listening, collection, verification, support), and an instruction for the talker's next turn.
+- **The tracker** rereads the conversation after each reply and slips an internal note to the thinker: what is known, what was refused, what is missing.
+- **The file** is written at the end by a separate model, from the transcript. It contains: `prenom`, `nom`, `age`, `sexe`, `situation`, `duree_a_la_rue`, `langue`, `urgence_signalee`, `consentement`, and `a_verifier` (uncertain points for the call handler). It invents nothing: `null` for any unknown or refused information.
 
-The talker receives the updated record and the thinker's instruction at each turn. It therefore never asks again for information already given, even if the person gave it out of order.
+### Noise and interruptions
 
-If the thinker detects a **life-threatening danger**, it interrupts the flow and immediately directs the person to 15 or 112.
-
-### Reliability
-
-- **Deterministic priority score**: the thinker only extracts factual criteria (true or false); the score is calculated by code, from a fixed rubric. The result is reproducible and auditable.
-- **Fallback between models**: the thinker can try several models in order (`THINKER_MODELS`) if one is overloaded or out of quota.
-- **Final analysis**: at the end of the call, the thinker performs one last analysis to incorporate the final exchanges.
-- **Latency measurement**: each exchange is timed, step by step (turn end, transcription, talker, speech synthesis), with a target of 600 ms. A summary (median and P95) is produced at the end of each call.
+- **WebRTC echo and noise cancellation** on computers; on the phone, the caller's phone removes the echo.
+- **Only useful audio is sent to transcription** (from 0.2 s before the voice to 0.15 s after): surrounding noise never becomes fake words.
+- **Text filter**: empty text, Miki's own echo, or cut-off sentences are ignored or held.
+- **Two-step barge-in**: if the caller speaks, Miki's volume drops; she only stops if real words confirm the interruption. Noise can therefore never cut her off.
+- **Spelling**: when Miki asks for spelling, listening waits for all the letters before replying, and the read-back happens without delay.
+- **Pre-recorded fixed phrases** ("Sorry, could you repeat?"): spoken without waiting for speech synthesis.
 
 ### What each call produces
 
-At the end of the call, two files are written to `sessions/`:
+Each call creates a folder `sessions/<date>_<program>/`, which is not versioned:
 
-- `…-appel.json`: the complete record (identity, situation, location, special cases, criteria, priority score) and the transcript;
-- `…-latence.csv`: latency measurements for each exchange.
+- `fiche.json`: the caller's file;
+- `journal.txt`: everything that happened, to the millisecond (voice detected, turn end and why, text heard, filter and judge decisions, barge-in, latencies);
+- `session.json`: the full conversation, including ignored fragments;
+- `micro.wav` and `ia.wav`: the caller's audio and Miki's voice.
 
-It is this record, always in the same format, that will feed the call handler interface and the statistics.
+### The programs
+
+`bash lancer.sh` shows a menu:
+
+| Choice | Program | Principle |
+|---|---|---|
+| 1 | `realtime` | OpenAI Realtime (speech → speech), on the computer's or phone's microphone |
+| 2 | `cascade` | Miki's cascade, on the computer's or phone's microphone |
+| 3 | `eleven` | ElevenLabs Realtime, for comparison |
+| 4 | `appel` | **Miki on the phone**: the Twilio number is connected to the cascade |
+| 5 | `live` | Experimental, on the phone: a fast talker (gpt-oss-20b) and a background thinker (OpenAI gpt-5.5) it consults through function calling for hard questions |
 
 ### Files
 
-| File | Role |
-|---|---|
-| `agent.py` | The voice agent: pipeline, thinker, priority score, latency measurement, call recording |
-| `prompts.py` | The talker and thinker instructions, and the greeting message |
-| `Makefile` | Installation and launch |
-| `.env.example` | The list of API keys and settings (models, voice, rate) |
+```
+appel/       Miki on the phone: Twilio websocket server, Cloudflare tunnel, number wiring
+cascade/     Deepgram ear, thinker, ElevenLabs voice, file writing (fiche.py)
+commun/      listening, audio, filter, judge, voiceprint, conversation (orchestrator), roles, log
+live/        program 5 (talker + background thinker)
+realtime/    program 1 (OpenAI Realtime)
+eleven/      program 3 (ElevenLabs Realtime)
+pc/          install and launch on Mac
+telephone/   install and launch on Android (Termux + Debian)
+outils/      tester_ecoute.py: runs a WAV through listening and shows its decisions
+lancer.sh    one command to install and launch everything
+```
 
 ## Installation and launch
 
-Prerequisites: Python 3 and API keys for Deepgram, Groq, ElevenLabs (and optionally Google for Gemini).
+Requirements: Python 3 and Groq, Deepgram, ElevenLabs, and OpenAI (fallback) API keys, plus a Twilio account with a number for phone calls.
 
 ```bash
-make install   # creates the venv and installs dependencies
-make env       # creates .env, then fill in the keys
-make console   # talk to Miki from the terminal
+bash lancer.sh        # the first time, everything installs (venv, dependencies, models) and .env is created
+                      # put your keys in .env (never in the code), then relaunch
+bash lancer.sh 4      # Miki on the phone: leave it running, then call the Twilio number
+bash lancer.sh 4 --appeler +336XXXXXXXX   # or Miki calls you
 ```
 
-Transcriptions, records, and latency measurements for each call are saved in `sessions/`, which is not version-controlled.
+On Mac, `pc/installer_mac.sh` installs everything; on Android, `telephone/1_dans_termux.sh` then `telephone/2_installer.sh`. Useful options:
+
+```bash
+--penseur groq|openai|mistral   # conversation brain (default groq)
+--juge groq|openai|mistral      # fast checker (default groq)
+--role 115|libre                # role (default 115)
+--langue fr|en|multi            # spoken language (default fr)
+--audio fichier:essai.wav       # test without a microphone: the file acts as the microphone
+```
+
+The list of keys and settings (models, voices) is in `.env.example`. To restore the Twilio number's previous configuration: `.venv/bin/python -m appel.twilio --remettre`.

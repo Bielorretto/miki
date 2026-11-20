@@ -1,6 +1,10 @@
 .env
-venv/
 .venv/
-sessions/
 __pycache__/
-.DS_Store
+sessions/
+models/*.onnx
+bench/out/
+bench/cache/
+appel/sauvegarde_twilio.json
+outils/cloudflared
+cache/
