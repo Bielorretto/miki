@@ -26,7 +26,7 @@ Mais même les personnes prioritaires ne sont, pour la plupart, jamais prises en
 Miki est une assistante vocale à intelligence artificielle qui prend en charge les appelants pendant leur attente. On l'appelle sur un vrai numéro de téléphone.
 
 - **Elle décroche et se présente** : elle annonce qu'elle est une intelligence artificielle et demande l'accord de la personne avant de poser ses questions.
-- **Elle écoute et pose des questions simples**, une à la fois, avec douceur, dans l'ordre d'un écoutant du 115 : pour qui la personne appelle (elle-même ou un tiers), qui a besoin d'un hébergement ce soir (enfants et leur âge), santé (grossesse, handicap, mobilité), la ville où elle se trouve, si on peut la rappeler, puis prénom et nom, date de naissance (l'année suffit : c'est ce qui permet de retrouver son dossier), homme ou femme, animal et depuis quand elle est à la rue. Elle ne demande jamais de papiers, de nationalité ni d'adresse précise, et la personne peut rester anonyme.
+- **Elle écoute et pose des questions simples**, une à la fois, avec douceur : prénom et nom, âge, homme ou femme, situation (seule ou accompagnée, enfants, grossesse, santé, handicap, besoin urgent) et depuis quand la personne est à la rue. Elle ne demande jamais d'adresse.
 - **Elle fait épeler le prénom et le nom**, puis relit les lettres pour les faire confirmer.
 - **Elle résume ce qu'elle a compris** et le fait valider, puis demande s'il reste des questions et raccroche avec l'accord de la personne.
 - **Elle rédige automatiquement un dossier** à la fin de l'appel, pour l'écoutant qui prendra le relais.
@@ -113,7 +113,7 @@ Miki décroche chaque appel du 115, sans attente et en parallèle. Chaque appela
 Miki recueille des données sensibles au sens du RGPD (article 9), notamment de santé, de grossesse et de handicap. Le projet est conçu pour les traiter avec précaution :
 
 - **Transparence** : Miki annonce dès le début qu'elle est une intelligence artificielle, et elle demande l'accord de la personne avant de poser ses questions.
-- **Minimisation** : seules les informations utiles à la prise en charge sont demandées (la ville, jamais d'adresse précise, sauf le lieu où un tiers a vu la personne), jamais de papiers ni de nationalité, et la personne peut refuser de répondre à n'importe quelle question.
+- **Minimisation** : seules les informations utiles à la prise en charge sont demandées, jamais d'adresse, et la personne peut refuser de répondre à n'importe quelle question.
 - **Statistiques anonymisées** : les données transmises aux institutions seront agrégées et ne permettront pas d'identifier les personnes.
 
 Avant une mise en production, il faudra :
@@ -274,7 +274,7 @@ But even priority callers are, for the most part, never supported:
 Miki is an AI voice assistant that supports callers while they wait. She is reached through a real phone number.
 
 - **She picks up and introduces herself**: she says she is an artificial intelligence and asks for the person's consent before asking questions.
-- **She listens and asks simple questions**, one at a time, gently, in the order a 115 call handler would: who the call is for (the caller or someone else), who needs shelter tonight (children and their ages), health (pregnancy, disability, mobility), the town where the person is, whether they can be called back, then first and last name, date of birth (the year is enough: it is how their file is found), man or woman, pets and how long they have been on the street. She never asks for papers, nationality or a precise address, and the person may remain anonymous.
+- **She listens and asks simple questions**, one at a time, gently: first and last name, age, man or woman, situation (alone or with others, children, pregnancy, health, disability, urgent need), and how long the person has been on the street. She never asks for an address.
 - **She has the first and last name spelled out**, then reads the letters back for confirmation.
 - **She summarizes what she understood** and has it validated, then asks whether there are other questions and hangs up with the person's agreement.
 - **She automatically writes a file** at the end of the call, for the call handler who will take over.
@@ -361,7 +361,7 @@ Miki answers every 115 call, without waiting and in parallel. Every caller leave
 Miki collects sensitive data within the meaning of the GDPR (Article 9), including health, pregnancy, and disability data. The project is designed to handle it carefully:
 
 - **Transparency**: Miki announces from the start that she is an artificial intelligence, and asks for the person's consent before asking questions.
-- **Minimization**: only information useful for support is requested (the town, never a precise address, except where a third party saw the person), never papers or nationality, and the person may refuse to answer any question.
+- **Minimization**: only information useful for support is requested, never an address, and the person may refuse to answer any question.
 - **Anonymized statistics**: data transmitted to institutions will be aggregated and will not allow people to be identified.
 
 Before production, it will be necessary to:

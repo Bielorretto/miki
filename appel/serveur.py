@@ -128,7 +128,6 @@ class Appel:
                 if ev == "start":
                     self.stream_sid = m["start"]["streamSid"]
                     print(f"📞 Appel reçu ({m['start'].get('customParameters', {}).get('de', 'numéro masqué')})")
-                    self.bot.telephone_appelant = m["start"].get("customParameters", {}).get("de", "")
                     conversation = asyncio.create_task(self.bot.lancer())
                     # Conversation finie (l'IA a dit au revoir) : on ferme le flux, Twilio n'a plus d'instruction et raccroche.
                     conversation.add_done_callback(lambda _: asyncio.ensure_future(self.ws.close()))
@@ -159,8 +158,7 @@ async def servir(cfg: Config | None, appeler: str | None = None, gerer=None) -> 
         chemin = req.path
         if chemin.startswith("/voix") and f"k={jeton}" in chemin:
             hote = req.headers.get("Host", "")
-            sortant = "Direction=outbound" in chemin
-            de = re.search(r"[?&]To=([^&]+)" if sortant else r"[?&]From=([^&]+)", chemin)
+            de = re.search(r"From=([^&]+)", chemin)
             twiml = (f'<?xml version="1.0" encoding="UTF-8"?><Response><Connect><Stream url="wss://{hote}/media/{jeton}">'
                      f'<Parameter name="de" value="{html.escape(urllib.parse.unquote(de.group(1))) if de else ""}"/>'
                      f"</Stream></Connect></Response>")

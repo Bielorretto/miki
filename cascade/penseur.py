@@ -30,15 +30,10 @@ LIBELLE = re.compile(r"(^|\n)[ \t]*(?:[-*•]|\d+[.)])[ \t]*\**([^\n:*]{1,30}?)\
 # Fiche en cours, tenue à jour en parallèle par un petit modèle : le penseur sait ce qui est déjà recueilli
 # (il ne redemande pas une durée déjà donnée, n'insiste pas après un refus).
 SUIVI = """Tu lis la transcription d'un appel au 115 entre l'assistant vocal (IA) et l'appelant.
-Tiens à jour ce que l'appelant a DÉJÀ dit. Réponds en JSON avec les clés : langue, nom, prenom, naissance, sexe, rappel, a_la_rue, adresse, ville, code_postal, motif, pour_qui, menage, sante, animal, besoin, refus, profil.
+Tiens à jour ce que l'appelant a DÉJÀ dit. Réponds en JSON avec les clés : prenom, nom, age, sexe, situation, duree_a_la_rue, sante, refus.
 - Valeurs courtes en français, telles que l'appelant les a dites (orthographe épelée et confirmée pour prenom et nom, avec « confirmé » ou « à confirmer »).
-- langue : la langue choisie pour continuer l'appel. naissance : date, année ou âge. rappel : oui à ce numéro, autre numéro, ou pas de numéro.
-- a_la_rue : oui ou non (chez un ami, en logement…). adresse : l'adresse, ou le lieu où il passe la nuit (rue, repère).
-- motif : la raison de son appel, parmi « demande d'hébergement », « prestation maraude », « signalement d'une personne », « actualisation de la situation », « changement de prise en charge », « besoin d'informations », « certificat d'hébergement », « écoute », « autre ».
-- pour_qui : « pour lui-même », ou pour qui il appelle. menage : seul ou avec qui, âge de chaque enfant. sante : grossesse, handicap, mobilité, maladie, ou « rien de particulier ». animal : lesquels, ou « aucun ».
-- besoin : ce qu'il attend selon son motif (à partir de quand un hébergement ; denrées, boisson ou matériel pour une maraude ; état et accord de la personne signalée ; ce qui a changé ; ce qu'il veut savoir).
+- situation : seul ou accompagné, enfants, grossesse, besoin urgent. sante : santé, handicap, douleur.
 - refus : liste des informations que l'appelant ne veut pas ou ne peut pas donner.
-- profil : le ménage qui a besoin d'un hébergement, pour chercher une place : {"adultes": nombre, "ages_enfants": [âges], "enfants": nombre, "sexe": "Homme" ou "Femme" (la personne concernée), "enceinte": true/false, "pmr": true/false (fauteuil, mobilité réduite), "animal": true/false} ; null tant que le ménage n'est pas connu.
 - null si l'information n'a pas encore été donnée. N'invente rien, n'interprète rien."""
 
 
@@ -86,12 +81,8 @@ class Penseur:
         """Ce qui est déjà recueilli, en une ligne, pour le penseur."""
         if not self.suivi:
             return None
-        # Dans l'ordre d'importance du rôle 115 : le plus utile à l'écoutant d'abord.
-        noms = {"langue": "langue de l'appel", "nom": "nom", "prenom": "prénom", "naissance": "date de naissance",
-                "sexe": "homme ou femme", "rappel": "rappel à ce numéro", "a_la_rue": "à la rue ou non",
-                "adresse": "adresse ou lieu de nuit", "ville": "ville", "code_postal": "code postal",
-                "motif": "raison de l'appel", "pour_qui": "pour qui il appelle", "menage": "personnes avec lui",
-                "sante": "santé", "animal": "animaux", "besoin": "ce qu'il attend"}
+        noms = {"prenom": "prénom", "nom": "nom", "age": "âge", "sexe": "sexe", "situation": "situation",
+                "duree_a_la_rue": "depuis quand à la rue", "sante": "santé"}
         connu = [f"{n} : {self.suivi[k]}" for k, n in noms.items() if self.suivi.get(k) not in (None, "", [])]
         refus = self.suivi.get("refus") or []
         if not connu and not refus:
@@ -105,16 +96,7 @@ class Penseur:
         return texte
 
     async def _mettre_a_jour_suivi(self) -> None:
-        # Groq refuse souvent (429, limite de tokens par minute) : OpenAI prend le relais, sinon la note
-        # interne et le profil des places resteraient vides.
-        modeles = [self._suivi_modele]
-        if self._suivi_modele[0] != modele_juge("openai")[0]:
-            modeles.append(modele_juge("openai"))
-        for url, cle, modele in modeles:
-            if cle and await self._suivi_avec(url, cle, modele):
-                return
-
-    async def _suivi_avec(self, url: str, cle: str, modele: str) -> bool:
+        url, cle, modele = self._suivi_modele
         lignes = [f"{'IA' if m['role'] == 'assistant' else 'Appelant'} : {m['content']}" for m in self.historique[1:] if m["role"] != "system"]
         corps = {
             "model": modele,
@@ -138,13 +120,11 @@ class Penseur:
                 self.suivi = {k: (v.get(k) if v.get(k) not in (None, "", []) else ancien.get(k)) for k in set(ancien) | set(v)}
                 if self.log:
                     self.log("suivi", self._etat() or "rien encore")
-                return True
         except asyncio.CancelledError:
             raise
         except Exception as e:  # on garde la fiche précédente
             if self.log:
-                self.log("suivi", f"erreur {modele} {e!r}"[:160])
-        return False
+                self.log("suivi", f"erreur {e!r}"[:160])
 
     async def phrases(self, texte_utilisateur: str | None) -> AsyncIterator[str]:
         """Donne la réponse phrase par phrase."""
@@ -157,14 +137,6 @@ class Penseur:
             # La note va à la fin des consignes du début : gpt-oss n'attend des consignes qu'au début de la conversation
             # (un message « system » au milieu le fait dérailler : il récite son raisonnement, « Très très très… »).
             messages[0] = {"role": "system", "content": f"{messages[0]['content']}\n\n{etat}"}
-        if texte_utilisateur and self._suivi_modele:
-            from . import sisiao  # le SI SIAO : seulement si l'appelant demande s'il y a des places
-
-            if sisiao.DEMANDE_PLACES.search(texte_utilisateur):
-                note = await sisiao.places((self.suivi or {}).get("profil"))
-                if self.log:
-                    self.log("SI SIAO", note)
-                messages[0] = {"role": "system", "content": f"{messages[0]['content']}\n\n{note}"}
         self.secours_utilise = False
         tampon = ""
         premier = True

@@ -30,7 +30,6 @@ import numpy as np
 import websockets
 
 from appel.serveur import numero_a_appeler, servir
-from cascade import sisiao
 from cascade.fiche import CONSIGNES as CONSIGNES_FICHE
 from commun.audio import ulaw_vers_float
 from commun.config import charger_env, env
@@ -67,7 +66,6 @@ class AppelLive:
         self.ia: list[bytes] = []
         self.secondes = 0.0
         self.t0 = time.monotonic()
-        self.telephone = ""  # numéro de l'appelant (paramètre « de » de Twilio)
 
     # ------------------------------------------------------------------ transcription
 
@@ -179,7 +177,6 @@ class AppelLive:
                 if ev == "start":
                     self.sid = m["start"]["streamSid"]
                     print(f"📞 Appel reçu ({m['start'].get('customParameters', {}).get('de', 'numéro masqué')})")
-                    self.telephone = m["start"].get("customParameters", {}).get("de", "")
                     await self._ouvrir()
                     taches = [asyncio.create_task(self._ecouter_openai()), asyncio.create_task(self._parler())]
                     taches[0].add_done_callback(lambda _: asyncio.ensure_future(self.tw.close()))
@@ -220,8 +217,6 @@ class AppelLive:
                 self.journal.log("FICHE", json.dumps(fiche, ensure_ascii=False))
             except Exception as e:
                 self.journal.log("FICHE", f"non rédigée : {e!r}"[:300])
-        # Copie de test du SI SIAO (si SISIAO_URL est défini) : le pré-dossier entre aussitôt dans la file MIKI.
-        await sisiao.transmettre(self.lignes, self.telephone, self.journal.debut, self.journal)
         for nom, blocs in (("micro.wav", self.micro), ("ia.wav", self.ia)):
             if blocs:
                 x = (np.clip(ulaw_vers_float(b"".join(blocs)), -1, 1) * 32767).astype(np.int16)

@@ -24,7 +24,6 @@ from commun.conversation import PHRASES_FIXES, Conversation
 from commun.lancement import lancer
 
 from . import fiche as fiche_dossier
-from . import sisiao
 from .penseur import Penseur
 from .stt_deepgram import Deepgram
 from .tts_elevenlabs import ElevenLabs
@@ -169,9 +168,6 @@ class BotCascade(Conversation):
                 self._enregistrer_fiche(json.dumps(fiche, ensure_ascii=False))
             except Exception as e:
                 self.journal.log("FICHE", f"non rédigée : {e!r}"[:300])
-            # Copie de test du SI SIAO : le pré-dossier entre aussitôt dans la file d'attente MIKI.
-            await sisiao.transmettre(self.penseur.historique, getattr(self, "telephone_appelant", ""),
-                                     self.journal.debut, self.journal)
 
 
 if __name__ == "__main__":
