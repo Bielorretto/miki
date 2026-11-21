@@ -28,16 +28,66 @@ La transcription automatique du téléphone fait des erreurs : fie-toi d'abord �
 Réponds uniquement par un objet JSON valide, avec exactement ces clés :
 - "source" : "Usager" si la personne appelle pour elle-même, "Tiers" si quelqu'un appelle pour elle, "Maraude" si c'est une équipe de maraude ;
 - "personnes" : liste de toutes les personnes du ménage qui ont besoin d'un hébergement, la personne concernée en premier (pas le tiers qui appelle), puis chaque personne qui l'accompagne (conjoint, enfant…). Pour chacune : "nom" et "prenom" (écrits normalement, null si inconnus), "sexe" ("Homme", "Femme" ou null), "date_naissance" (AAAA-MM-JJ si la date complète est dite, sinon null), "annee_naissance" (AAAA si seule l'année est dite, sinon null), "age" (entier si seul l'âge est dit, sinon null), "enceinte" (true seulement si dit), "date_terme" (AAAA-MM-JJ, déduite du mois de grossesse si dit, sinon null), "pmr" (true seulement si un fauteuil roulant ou une mobilité réduite est dit), "handicap" (texte court ou null). Un enfant dont on ne connaît que l'âge est une personne avec seulement son âge ;
-- "ville" : la ville où elle se trouve ce soir, ou null ; "code_postal" : seulement s'il a été dit, sinon null ; "adresse" : le quartier, la rue ou le repère s'ils ont été dits, sinon null ;
+- "ville" : la ville où elle se trouve, ou null ; "code_postal" : seulement s'il a été dit, sinon null ; "adresse" : l'adresse où elle est hébergée ou habite (numéro et rue), ou, si elle est à la rue, l'endroit où elle passe la nuit (rue, repère), sinon null ;
+- "motif" : la raison de l'appel, parmi "Demande d'hébergement", "Demande de prestation maraude", "Signalement d'une personne", "Actualisation de la situation", "Changement de prise en charge", "Besoin d'informations", "Demande de certificat d'hébergement", "Besoins d'écoute sociale", "Autre" ;
+- "maraude" : pour une demande de maraude, {"besoins": parmi "denrées", "boisson", "matériel", "commentaire": précision utile à l'équipe ou null}, sinon null ;
 - "telephone_rappel" : un autre numéro donné pour la rappeler, sinon null ; "rappel_impossible" : true si elle a dit qu'on ne peut pas la rappeler à ce numéro ;
 - "animaux" : {"Chien": n, "Chat": n, "Autres": n} pour les animaux qui l'accompagnent, {} sinon ;
 - "urgence_vitale" : true seulement si l'appelant a décrit un danger vital immédiat ; "urgence_detail" : ce danger en une phrase, ou null ;
 - "autre_vulnerabilite" : un problème de santé, une sortie d'hôpital ou une autre fragilité sérieuse dite par l'appelant, en une phrase, ou null. N'y mets jamais la grossesse, le handicap, l'âge des enfants ni la mobilité : ils sont déjà dans "personnes" ;
 - "langue" : la langue parlée par l'appelant, en français (« Français », « Anglais »…) ; "niveau_francais" : "Courant", "Quelques mots" ou "Aucun" ; "interprete" : true si un interprète sera nécessaire ;
 - "animal" : "Oui" si l'appelant a un animal avec lui, "Non" s'il a dit ne pas en avoir, sinon null ;
-- "resume" : trois phrases au plus, factuelles, pour l'écoutant qui rappellera : situation, depuis quand à la rue (première nuit dehors ?), détresse exprimée, et qui appelle si c'est un tiers ;
+- "resume" : toujours en français, même si l'appel était dans une autre langue ; trois phrases au plus, factuelles, pour l'écoutant qui rappellera : la raison de l'appel et ce que la personne attend, sa situation (à la rue ou hébergée chez quelqu'un, et jusqu'à quand), et qui appelle si c'est un tiers ;
 - "a_verifier" : parmi "nom", "prenom", "date_naissance", "telephone", "adresse", ceux dont la réponse est incertaine (orthographe non confirmée, âge approximatif, rappel impossible à ce numéro, lieu imprécis), ou [].
 N'invente rien et n'interprète rien : null pour toute information inconnue ou refusée."""
+
+
+# L'appelant demande s'il reste des places (« il y a de la place ce soir ? », « vous avez des lits ? »).
+# « place de la République » ne suffit pas : il faut une tournure de question ou « libre / disponible ».
+DEMANDE_PLACES = re.compile(
+    r"\b(places?|lits?|de la place)\b.{0,30}\b(libres?|disponibles?|dispo|ce soir|pour (moi|nous|dormir))"
+    r"|\b(reste|restent|y a|y a-t-il|il y a|avez-vous|vous avez|ya)\b.{0,25}\b(places?|lits?|de la place)\b", re.I)
+
+
+async def places(profil) -> str:
+    """Pendant l'appel : y a-t-il des places libres compatibles ce soir ? Réponse du SI SIAO, en une
+    note pour le penseur (oui ou non, sans nombre ni structure : l'attribution reste à l'écoutant)."""
+    url = env("SISIAO_URL").rstrip("/")
+    debut = "Note interne (ne la lis jamais) : l'appelant demande s'il y a des places. "
+    fin = " Réponds en une ou deux phrases, sans nombre ni nom de structure, puis reprends tes questions."
+    if not url:
+        return debut + "Tu n'as pas accès aux places : dis que l'écoutant qui le rappellera pourra le lui dire." + fin
+    if not isinstance(profil, dict) or not (profil.get("adultes") or profil.get("enfants") or profil.get("ages_enfants")):
+        return debut + ("Tu ne sais pas encore qui a besoin d'un hébergement : dis-le simplement et demande-le, "
+                        "puis tu pourras regarder les places.") + fin
+    try:
+        entetes = {"X-Miki-Jeton": env("MIKI_JETON")} if env("MIKI_JETON") else {}
+        async with httpx.AsyncClient(timeout=2) as client:
+            r = await client.post(f"{url}/api/miki/places", json=profil, headers=entetes)
+        r.raise_for_status()
+        j = r.json()
+    except Exception:
+        return debut + "Le logiciel du 115 ne répond pas : dis que l'écoutant pourra le lui dire en le rappelant." + fin
+    if j.get("disponible"):
+        etat = (f"Le SI SIAO indique qu'il y a en ce moment des places libres compatibles avec son ménage ({j.get('profil')}). "
+                "Dis-le, et précise que c'est l'écoutant qui pourra lui en attribuer une en le rappelant ; ne promets rien.")
+    else:
+        etat = (f"Le SI SIAO indique qu'il n'y a pas, en ce moment, de place libre compatible avec son ménage ({j.get('profil')}). "
+                "Dis-le franchement, et précise que son dossier est quand même transmis à un écoutant, qui le rappellera.")
+    return debut + etat + fin
+
+
+def _resume(analyse: dict) -> str:
+    """Le SI SIAO n'a pas de case « motif » dans le pré-dossier MIKI : le motif et les besoins de maraude
+    ouvrent le résumé, que l'écoutant lit en premier."""
+    tete = []
+    if isinstance(analyse.get("motif"), str) and analyse["motif"]:
+        tete.append(f"Motif : {analyse['motif']}.")
+    m = analyse.get("maraude")
+    if isinstance(m, dict) and (m.get("besoins") or m.get("commentaire")):
+        besoins = m.get("besoins") if isinstance(m.get("besoins"), list) else [m.get("besoins")] if m.get("besoins") else []
+        tete.append("Maraude : " + ", ".join(map(str, besoins)) + (f" ({m['commentaire']})" if m.get("commentaire") else "") + ".")
+    return " ".join(tete + [str(analyse.get("resume") or "")]).strip()
 
 
 def _personnes(liste) -> list[dict]:
@@ -76,8 +126,9 @@ async def transmettre(historique: list[dict], telephone: str, debut: datetime, j
             "personnes": _personnes(analyse.get("personnes")),
             "transcription": fiche_dossier.transcription(historique),
             "a_verifier": a_verifier,
+            "resume": _resume(analyse),
             **{k: analyse.get(k) for k in ("urgence_vitale", "urgence_detail", "autre_vulnerabilite", "langue",
-                                          "niveau_francais", "interprete", "animal", "animaux", "resume",
+                                          "niveau_francais", "interprete", "animal", "animaux",
                                           "ville", "code_postal", "adresse")},
         }
         trace["envoye"] = {k: v for k, v in donnees.items() if k != "transcription"}
